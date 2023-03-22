@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -72,15 +73,13 @@ public class VenueService {
 
     public List<HallDto> getHallsByVenueId(String id) {
         List<Hall> halls = hallRepository.findByVenueId(id);
-        if (halls.isEmpty())
-            return null;
-        return halls.stream().map(this::convertToDto).collect(Collectors.toList());
+        return halls.stream().map(HallDto::new).toList();
     }
 
     public String createHall(String venueId, HallDto hallDto) {
         hallDto.setName(hallDto.getName().toLowerCase());
         Optional<Venue> venueOptional = venueRepository.findById(venueId);
-        List<Hall> nameCheck = hallRepository.findByVenueId(venueId);
+        List<Hall> nameCheck = hallRepository.findByVenueId(venueId).stream().toList();
         CollectionUtils.filter(nameCheck, o -> ((Hall) o).getName().equals(hallDto.getName()));
 
         if (nameCheck.isEmpty()) {
@@ -94,22 +93,5 @@ public class VenueService {
             }
         } else
             return "name";
-    }
-
-    private VenueDto convertToDto(Venue venue) {
-        VenueDto venueDto = new VenueDto();
-        venueDto.setId(venue.getId());
-        venueDto.setName(venue.getName());
-        venueDto.setAddress(venue.getAddress());
-        venueDto.setEmail(venue.getEmail());
-        return venueDto;
-    }
-
-    private HallDto convertToDto(Hall hall) {
-        HallDto hallDto = new HallDto();
-        hallDto.setId(hall.getId());
-        hallDto.setName(hall.getName());
-        hallDto.setVenueId(hall.getVenueId());
-        return hallDto;
     }
 }

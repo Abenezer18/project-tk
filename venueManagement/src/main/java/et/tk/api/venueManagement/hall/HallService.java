@@ -4,7 +4,8 @@ import et.tk.api.venueManagement.seat.SeatRepository;
 import et.tk.api.venueManagement.venue.VenueRepository;
 import et.tk.api.venueManagement.seat.Seat;
 import et.tk.api.venueManagement.seat.SeatDto;
-import et.tk.venueManagement.api.seat.*;
+import et.tk.api.venueManagement.seat.*;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class HallService {
 
-    @Autowired
     private SeatRepository seatRepository;
-    @Autowired
     private HallRepository hallRepository;
-    @Autowired
     private VenueRepository venueRepository;
 
     public HallDto getHall(String hallId) {
@@ -41,7 +40,7 @@ public class HallService {
 
         hallRepository.deleteById(hallId);
 
-        List<Hall> nameCheck = hallRepository.findByVenueId(hall.getVenueId()); // checking name
+        List<Hall> nameCheck = hallRepository.findByVenueId(hall.getVenueId()).stream().toList(); // checking name
         CollectionUtils.filter(nameCheck, o -> ((Hall) o).getName().equals(hallDto.getName()));
 
         if (nameCheck.isEmpty()) {
@@ -55,6 +54,7 @@ public class HallService {
             return "name";
         }
     }
+
     public String deleteHall(String hallId) {
         Optional<Hall> hallOptional = hallRepository.findById(hallId);
 

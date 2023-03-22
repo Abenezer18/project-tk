@@ -18,11 +18,8 @@ public class Venue {
 
     @Id
     private String id;
-
     private String name;
-
     private String address;
-
     private String email;
     private String clientId;
 

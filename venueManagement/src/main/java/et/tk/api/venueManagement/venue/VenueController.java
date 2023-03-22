@@ -38,8 +38,8 @@ public class VenueController {
     @GetMapping
     public ResponseEntity<List<VenueInfoView>> getVenues() {
         List<VenueInfoView> venueInfoView = venueService.getVenues();
-        if (venueInfoView == null)
-            return new ResponseEntity<>(HttpStatus.OK);
+        if (venueInfoView.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(venueInfoView,HttpStatus.FOUND);
     }
 
@@ -82,7 +82,7 @@ public class VenueController {
     @GetMapping("/{id}/halls")
     public ResponseEntity<List<HallDto>> getHallsByVenueId(@PathVariable String id) {
         List<HallDto> hallDtos = venueService.getHallsByVenueId(id);
-        if (hallDtos == null)
+        if (hallDtos.isEmpty())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(hallDtos,HttpStatus.FOUND);
     }
