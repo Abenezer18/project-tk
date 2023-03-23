@@ -20,13 +20,13 @@ public class SeatService {
         return new SeatDto(seat);
     }
 
-    public SeatDto updateSeat(String id, SeatDto seatDto) {
+    public String updateSeat(String id, SeatDto seatDto) {
         seatDto.setRow(seatDto.getRow().toUpperCase());
         Optional<Seat> seatOptional = seatRepository.findById(id);
         if (seatOptional.isEmpty())
-            return null;
+            return "not exist";
         Seat seat = seatOptional.get();
-
+        Seat backUp = seat;
         seatRepository.deleteById(id);
 
         List<Seat> check = seatRepository.findByHallId(seat.getHallId());
@@ -36,10 +36,11 @@ public class SeatService {
         if (check.isEmpty()) {
             seat.setRow(seatDto.getRow());
             seat.setNumber(seatDto.getNumber());
-            seat = seatRepository.save(seat);
-            return new SeatDto(seat);
+            seatRepository.save(seat);
+            return "updated";
         } else {
-            return null;
+            seatRepository.save(backUp);
+            return "name";
         }
     }
 

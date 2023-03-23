@@ -80,7 +80,7 @@ public class VenueController {
             return new ResponseEntity<>("name exists!", HttpStatus.FOUND);
         else if (status == "venue")
             return new ResponseEntity<>("venue dose not exist!", HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>("Hall created"+status, HttpStatus.CREATED);
+        return new ResponseEntity<>("Hall created", HttpStatus.CREATED);
     }
 
     @GetMapping("/{venueId}/halls")

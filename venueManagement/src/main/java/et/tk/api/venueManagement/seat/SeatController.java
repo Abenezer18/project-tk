@@ -22,10 +22,13 @@ public class SeatController {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateSeat(@PathVariable String id, @RequestBody SeatDto seatDto) {
-        SeatDto updatedSeat = seatService.updateSeat(id, seatDto);
-        if (updatedSeat == null)
+        String status = seatService.updateSeat(id, seatDto);
+        if (status == "not exist")
+            return new ResponseEntity<>("Seat does not exist in hall", HttpStatus.NOT_FOUND);
+        else if (status == "name") {
             return new ResponseEntity<>("seat exists, change name.", HttpStatus.FOUND);
-        return new ResponseEntity<>("Updated \n" + updatedSeat, HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>("Updated", HttpStatus.FOUND);
     }
 
     @DeleteMapping("/{id}")
