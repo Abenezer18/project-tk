@@ -15,12 +15,9 @@ public class Seat {
 
     @Id
     private String id;
-
     private String row;
-
     private int number;
 
-    @DBRef
     private String hallId;
 
     public Seat(String row, int number, String hallId) {

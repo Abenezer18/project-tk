@@ -1,6 +1,7 @@
 package et.tk.api.venueManagement.venue;
 
 import et.tk.api.venueManagement.hall.HallDto;
+import et.tk.api.venueManagement.seat.SeatDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -52,11 +53,14 @@ public class VenueController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VenueInfoView> updateVenue(@PathVariable String id, @RequestBody VenueDto venueDto) {
-        VenueInfoView updatedVenueDto = venueService.updateVenue(id, venueDto);
-        if (updatedVenueDto == null)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(updatedVenueDto,HttpStatus.OK);
+    public ResponseEntity<String> updateVenue(@PathVariable String id, @RequestBody VenueDto venueDto) {
+        String status = venueService.updateVenue(id, venueDto);
+        if (status == "not found")
+            return new ResponseEntity<>("Venue not found", HttpStatus.NOT_FOUND);
+        else if (status == "name") {
+            return new ResponseEntity<>("Name already exists",HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>("Updated",HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -69,20 +73,20 @@ public class VenueController {
 
     }
 
-    @PostMapping("/{id}/halls")
-    public ResponseEntity<String> createHall(@PathVariable String id, @RequestBody HallDto hallDto) {
-        String status = venueService.createHall(id, hallDto);
+    @PostMapping("/{venueId}/halls")
+    public ResponseEntity<String> createHall(@PathVariable String venueId, @RequestBody HallDto hallDto) {
+        String status = venueService.createHall(venueId, hallDto);
         if (status == "name")
             return new ResponseEntity<>("name exists!", HttpStatus.FOUND);
         else if (status == "venue")
             return new ResponseEntity<>("venue dose not exist!", HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>("Hall created", HttpStatus.CREATED);
+        return new ResponseEntity<>("Hall created"+status, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}/halls")
-    public ResponseEntity<List<HallDto>> getHallsByVenueId(@PathVariable String id) {
-        List<HallDto> hallDtos = venueService.getHallsByVenueId(id);
-        if (hallDtos.isEmpty())
+    @GetMapping("/{venueId}/halls")
+    public ResponseEntity<List<HallDto>> getHallsByVenueId(@PathVariable String venueId) {
+        List<HallDto> hallDtos = venueService.getHallsByVenueId(venueId);
+        if (hallDtos == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(hallDtos,HttpStatus.FOUND);
     }

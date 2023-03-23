@@ -15,9 +15,6 @@ public class Hall {
     @Id
     private String id;
     private String name;
-
-    //  private int capacity;
-    @DBRef
     private String venueId;
 
     // for POST
