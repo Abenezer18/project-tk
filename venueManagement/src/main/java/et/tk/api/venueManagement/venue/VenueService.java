@@ -1,6 +1,7 @@
 package et.tk.api.venueManagement.venue;
 
 import et.tk.api.venueManagement.hall.Hall;
+import et.tk.api.venueManagement.hall.HallDetailedResponse;
 import et.tk.api.venueManagement.hall.HallDto;
 import et.tk.api.venueManagement.hall.HallRepository;
 import et.tk.api.venueManagement.seat.Seat;
@@ -42,6 +43,18 @@ public class VenueService {
     public List<VenueInfoView> getVenues() {
         List<Venue> venues = venueRepository.findAll();
         return venues.stream().map(VenueInfoView::new).toList();
+    }
+
+    public VenueDetailedResponse getDetailedVenueResponse(String id){
+        Optional<Venue> venueOptional = venueRepository.findById(id);
+        if (venueOptional.isEmpty())
+            return null;
+        VenueDetailedResponse venueDetailedResponse = new VenueDetailedResponse(venueOptional.get());
+
+
+        venueDetailedResponse.setHallDetailedResponse(this.getHallsDetailedResponse(id));
+
+        return venueDetailedResponse;
     }
 
     public VenueInfoView getVenueById(String id) {
@@ -86,6 +99,23 @@ public class VenueService {
             return null;
         return halls.stream().map(HallDto::new).collect(Collectors.toList());
     }
+
+    public List<HallDetailedResponse> getHallsDetailedResponse(String id) {
+        List<Hall> halls = hallRepository.findAll();
+        CollectionUtils.filter(halls, o -> ((Hall) o).getVenueId().equals(id));
+        if (halls.isEmpty())
+            return null;
+        List<HallDetailedResponse> hallDetailedResponses = halls.stream().map(HallDetailedResponse::new).toList();
+
+        for (int i = 0; i < hallDetailedResponses.size(); i++) {
+            String hallId = hallDetailedResponses.get(i).getId();
+            List<Seat> seatsInHall = seatRepository.findByHallId(hallId);
+
+            hallDetailedResponses.get(i).setSeats(seatsInHall);
+        }
+        return hallDetailedResponses;
+    }
+
     public String createHall(String venueId, HallDto hallDto) {
         if (this.getVenueById(venueId) == null)
             return "venue";

@@ -36,6 +36,15 @@ public class VenueController {
         return new ResponseEntity<>(savedVenueDto, HttpStatus.CREATED);
     }
 
+
+    @GetMapping("/detailed/{id}")
+    public ResponseEntity<VenueDetailedResponse> getDetailedVenueResponse(@PathVariable String id){
+        VenueDetailedResponse venueDetailedResponses = venueService.getDetailedVenueResponse(id);
+        if (venueDetailedResponses == null)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(venueDetailedResponses,HttpStatus.FOUND);
+    }
+
     @GetMapping
     public ResponseEntity<List<VenueInfoView>> getVenues() {
         List<VenueInfoView> venueInfoView = venueService.getVenues();
