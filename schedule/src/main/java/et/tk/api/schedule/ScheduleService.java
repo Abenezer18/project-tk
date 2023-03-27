@@ -1,8 +1,7 @@
 package et.tk.api.schedule;
 
-import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import et.tk.api.schedule.dto.*;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,9 +12,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class ScheduleService {
+    @Autowired
     private ScheduleRepository scheduleRepository;
+    @Autowired
     private RestTemplate restTemplate;
 
     public VenueInfo venueInfo (String venueId){
@@ -23,7 +23,6 @@ public class ScheduleService {
         ResponseEntity<VenueInfo> venueInfoResponseEntity = restTemplate
                 .getForEntity("http://localhost:8080/api/venues/" + venueId, VenueInfo.class);
         VenueInfo venueInfo = venueInfoResponseEntity.getBody();
-
         System.out.println(venueInfoResponseEntity.getStatusCode());
         return venueInfo;
     }
@@ -37,11 +36,9 @@ public class ScheduleService {
         return hallInfo;
     }
     public MovieInfo movieInfo (String movieId){
-
         ResponseEntity<MovieInfo> movieInfoResponseEntity = restTemplate
-                .getForEntity("http://localhost:8081/api/movies/" + movieId, MovieInfo.class);
+                .getForEntity("http://localhost:8081/movies/" + movieId, MovieInfo.class);
         MovieInfo movieInfo = movieInfoResponseEntity.getBody();
-
         System.out.println(movieInfoResponseEntity.getStatusCode());
         return movieInfo;
     }
@@ -54,12 +51,24 @@ public class ScheduleService {
         MovieInfo movieInfo = this.movieInfo(movieId);
         if (movieInfo == null)
             return "movie";
-        List <Schedule> bookCheck = scheduleRepository.findByHallId(hallId).stream().toList();
+
+//        // start here
+//        Schedule newSchedule = new Schedule(schedulePost);
+//        newSchedule.setHallId(hallId);
+//        newSchedule.setMovieId(movieId);
+//        scheduleRepository.save(newSchedule);
+//        return "booked";
+//        // end here
+
+        List <Schedule> bookCheck = scheduleRepository.findAll();
+        CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getHallId().equals(hallId));
         CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getDate().equals(schedulePost.getDate()));
         CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getStartTime().equals(schedulePost.getStartTime()));
 
         if (bookCheck.isEmpty()){
             Schedule newSchedule = new Schedule(schedulePost);
+            newSchedule.setHallId(hallId);
+            newSchedule.setMovieId(movieId);
             scheduleRepository.save(newSchedule);
             return null;
         } else {
@@ -68,7 +77,11 @@ public class ScheduleService {
     }
 
     public List<ScheduleMinimalist> getAllSchedules(){
+
         List<Schedule> scheduleList = scheduleRepository.findAll();
+//        Optional<Schedule> scheduleOptional = scheduleRepository.findById(id);
+        if (scheduleList.isEmpty())
+            return null;
         return scheduleList.stream().map(ScheduleMinimalist::new).toList();
     }
 

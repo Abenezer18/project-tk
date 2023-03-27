@@ -46,6 +46,7 @@ public class VenueController {
 
     @GetMapping("/{id}")
     public ResponseEntity<VenueInfoView> getVenueById(@PathVariable String id) {
+        System.out.println("in venue controller");
         VenueInfoView venueDto = venueService.getVenueById(id);
         if (venueDto == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

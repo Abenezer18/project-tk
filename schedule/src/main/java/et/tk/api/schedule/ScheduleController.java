@@ -7,12 +7,11 @@ import et.tk.api.schedule.dto.ScheduleUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/schedules")
 public class ScheduleController {
     @Autowired
@@ -26,9 +25,9 @@ public class ScheduleController {
         else if (status == "hall")
             return new ResponseEntity<>("Hall does not exist", HttpStatus.NOT_FOUND);
         else if (status == "booked")
-            return new ResponseEntity<>("Hall booked for the specified date and time", HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Hall already booked for the specified date and time", HttpStatus.CONFLICT);
         else
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>("Schedule created",HttpStatus.CREATED);
     }
 
     @GetMapping

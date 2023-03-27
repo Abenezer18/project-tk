@@ -1,11 +1,10 @@
 package et.tk.api.schedule.dto;
 
 import et.tk.api.schedule.Schedule;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScheduleMinimalist {

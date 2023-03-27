@@ -1,4 +1,4 @@
-package et.tk.api.emdb.movie.repositories;
+package et.tk.api.emdb.movie;
 
 import java.util.List;
 import java.util.Optional;

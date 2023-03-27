@@ -18,7 +18,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("movies")
+@Document("movies") // @Document(collection = "halls") if you are not using the @Builder annotation
 @Builder
 public class Movie {
 
@@ -58,7 +58,7 @@ public class Movie {
         this.year = movieMinimalistView.getYear();
     }
     //POST
-    Movie (MoviePostAndUpdate moviePostAndUpdate){
+    public Movie (MoviePostAndUpdate moviePostAndUpdate){
         this.title = moviePostAndUpdate.getTitle();
         this.year = moviePostAndUpdate.getYear();
         this.rated = moviePostAndUpdate.getRated();

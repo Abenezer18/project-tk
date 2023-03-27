@@ -3,50 +3,52 @@ package et.tk.api.schedule;
 import et.tk.api.schedule.dto.SchedulePost;
 import et.tk.api.schedule.dto.ScheduleUpdate;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import nonapi.io.github.classgraph.json.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import lombok.Setter;
+
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.TimeZone;
+import java.lang.String;
 
-@Data
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collation = "schedules")
+@Document("schedule")
+@Builder
 public class Schedule {
 
     @Id
     private String id;
-    @DBRef
     private String movieId;
-    @DBRef
     private String hallId;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date date;
+    private String date;
     private String startTime;
     private String endTime;
-    private LocalDateTime dateOfPublish;
-    private LocalDateTime lastUpdated;
+    private String dateOfPublish;
+    private String lastUpdated;
+    private String all; // .find all is not working
 
-    Schedule (SchedulePost schedulePost){
+    public Schedule (SchedulePost schedulePost){
         this.movieId = schedulePost.getMovieId();
         this.hallId = schedulePost.getHallId();
         this.date = schedulePost.getDate();
         this.startTime = schedulePost.getStartTime();
         this.endTime = schedulePost.getEndTime();
-        this.dateOfPublish = LocalDateTime.now();
+        this.dateOfPublish = LocalDateTime.now().toString();
+        this.all = "0";
     }
-    Schedule (ScheduleUpdate scheduleUpdate){
+    public Schedule (ScheduleUpdate scheduleUpdate){
         this.movieId = scheduleUpdate.getMovieId();
         this.hallId = scheduleUpdate.getHallId();
         this.date = scheduleUpdate.getDate();
         this.startTime = scheduleUpdate.getStartTime();
         this.endTime = scheduleUpdate.getEndTime();
-        this.lastUpdated = LocalDateTime.now();
+        this.lastUpdated = LocalDateTime.now().toString();
     }
 }

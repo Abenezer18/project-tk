@@ -2,6 +2,7 @@ package et.tk.api.emdb.movie;
 
 import java.util.List;
 
+import et.tk.api.emdb.movie.dto.MovieDetailedResponse;
 import et.tk.api.emdb.movie.dto.MovieMinimalistView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,8 +43,17 @@ public class MovieController {
         return new ResponseEntity<>(result, HttpStatus.OK) ;
     }
 
+    @GetMapping("/movies/{id}")
+    public ResponseEntity<MovieDetailedResponse> getMovieById(@PathVariable String id) {
+        MovieDetailedResponse result = movieService.getMovieById(id);
+
+        if (result == null)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(result, HttpStatus.OK) ;
+    }
+
     //GET movie by title using search repository
-    @GetMapping("/movies/{title}")
+    @GetMapping("/movies/title/{title}")
     public ResponseEntity<List<MovieMinimalistView>> search(@PathVariable String title){
 
         List<MovieMinimalistView> searchResult = movieService.search(title);

@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import et.tk.api.emdb.movie.dto.MovieDetailedResponse;
 import et.tk.api.emdb.movie.dto.MovieMinimalistView;
 import et.tk.api.emdb.movie.dto.MoviePostAndUpdate;
-import et.tk.api.emdb.movie.repositories.MovieRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -50,6 +50,13 @@ public class MovieService {
         return movies.stream().map(MovieMinimalistView::new).toList();
     }
 
+    // GET  movie by id form DB
+    public MovieDetailedResponse getMovieById(String id){
+        Optional<Movie> movie = movieRepository.findById(id);
+        if (movie.isEmpty())
+            return null;
+        return new MovieDetailedResponse(movie.get());
+    }
     // search by partial title
     public List<MovieMinimalistView> search(String partialString) {
         Query query = new Query();
