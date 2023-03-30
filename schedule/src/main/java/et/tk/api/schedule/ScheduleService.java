@@ -132,13 +132,16 @@ public class ScheduleService {
         if (scheduleOptional.isEmpty())
             return "schedule";
         Schedule oldSchedule = scheduleOptional.get();
+
         HallInfo hallInfo = this.hallInfo(scheduleUpdate.getHallId()); // checking if hall exists
         if (hallInfo == null)
             return "hallDoesNotExist";
+
         MovieInfo movieInfo = this.movieInfo(scheduleUpdate.getMovieId());
         if (movieInfo == null)
             return "movieDoesNotExist";
         scheduleRepository.deleteById(id);
+
         List<Schedule> bookCheck = scheduleRepository.findByHallId(scheduleUpdate.getHallId()).stream().toList();
         CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getDate().equals(scheduleUpdate.getDate()));
         CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getStartTime().equals(scheduleUpdate.getStartTime()));
@@ -160,5 +163,4 @@ public class ScheduleService {
         scheduleRepository.deleteById(id);
         return "deleted";
     }
-
 }
