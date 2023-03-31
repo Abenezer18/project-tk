@@ -41,8 +41,7 @@ public class VenueService {
     }
 
     public List<VenueInfoView> getVenues() {
-        List<Venue> venues = venueRepository.findAll();
-        return venues.stream().map(VenueInfoView::new).toList();
+        return venueRepository.findAll().stream().map(VenueInfoView::new).toList();
     }
 
     public VenueDetailedResponse getDetailedVenueResponse(String id){

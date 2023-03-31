@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("schedule")
+@Document("tickets")
 @Builder
 public class Ticket {
 

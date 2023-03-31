@@ -40,8 +40,7 @@ public class HallService {
 
         hallRepository.deleteById(hallId);
 
-        List<Hall> nameCheck = hallRepository.findAll();
-        CollectionUtils.filter(nameCheck, o -> ((Hall) o).getVenueId().equals(hall.getVenueId()));
+        List<Hall> nameCheck = hallRepository.findByVenueId(hall.getVenueId());
         CollectionUtils.filter(nameCheck, o -> ((Hall) o).getName().equals(hallDto.getName()));
 
         if (nameCheck.isEmpty()) {
