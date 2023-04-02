@@ -27,15 +27,12 @@ public class TicketController {
         else if (Objects.equals(status, "created"))
             return new ResponseEntity<>("Ticket created!", HttpStatus.CREATED);
         else
-            return new ResponseEntity<>("Unknown error!\n"+ status , HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(status, HttpStatus.CONFLICT);
     }
 
     @GetMapping
     public ResponseEntity<List<Ticket>> getAllTickets(){
-        List<Ticket> ticketList = ticketService.getAllTickets();
-        if (ticketList == null)
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(ticketList, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ticketService.getAllTickets(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

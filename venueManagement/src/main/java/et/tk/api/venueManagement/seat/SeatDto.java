@@ -12,6 +12,7 @@ public class SeatDto {
     private String row;
     private int number;
     private String hallId;
+    private boolean seatStatus;
 
 
     public SeatDto(Seat seat) {
@@ -19,5 +20,6 @@ public class SeatDto {
         this.row = seat.getRow();
         this.number = seat.getNumber();
         this.hallId = seat.getHallId();
+        this.seatStatus = seat.isSeatStatus();
     }
 }

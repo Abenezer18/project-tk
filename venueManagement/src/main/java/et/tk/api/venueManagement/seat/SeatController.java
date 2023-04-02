@@ -14,6 +14,7 @@ public class SeatController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SeatDto> getSeat(@PathVariable String id) {
+        System.out.println("\n\n gygy \n\n");
         SeatDto seat = seatService.getSeat(id);
         if (seat == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

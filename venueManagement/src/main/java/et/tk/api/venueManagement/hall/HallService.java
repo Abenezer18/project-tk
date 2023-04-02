@@ -93,6 +93,7 @@ public class HallService {
             return null;
         return seats.stream().map(this::convertToDto).collect(Collectors.toList());
     }
+
     private SeatDto convertToDto(Seat seat) {
         SeatDto seatDto = new SeatDto();
         seatDto.setId(seat.getId());

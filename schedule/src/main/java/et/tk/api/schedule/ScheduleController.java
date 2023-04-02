@@ -60,6 +60,14 @@ public class ScheduleController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/ticket/{id}")
+    public ResponseEntity<Schedule> getScheduleByIdForTicket(@PathVariable String id) {
+        Schedule result = scheduleService.getScheduleByIdForTicket(id);
+        if (result == null)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<String> updateSchedule(@PathVariable String id, @RequestBody ScheduleUpdate scheduleUpdate) {
         String status = scheduleService.updateSchedule(id, scheduleUpdate);

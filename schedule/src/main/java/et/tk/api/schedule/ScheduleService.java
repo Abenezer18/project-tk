@@ -21,7 +21,7 @@ public class ScheduleService {
     public VenueInfo venueInfo (String venueId){
 
         ResponseEntity<VenueInfo> venueInfoResponseEntity = restTemplate
-                .getForEntity("http://localhost:8080/api/venues/" + venueId, VenueInfo.class);
+                .getForEntity("http://localhost:8081/api/venues/" + venueId, VenueInfo.class);
         VenueInfo venueInfo = venueInfoResponseEntity.getBody();
         System.out.println(venueInfoResponseEntity.getStatusCode());
         return venueInfo;
@@ -29,7 +29,7 @@ public class ScheduleService {
     public HallInfo hallInfo (String hallId){
 
         ResponseEntity<HallInfo> hallInfoResponseEntity = restTemplate
-                .getForEntity("http://localhost:8080/api/halls/" + hallId, HallInfo.class);
+                .getForEntity("http://localhost:8081/api/halls/" + hallId, HallInfo.class);
         HallInfo hallInfo = hallInfoResponseEntity.getBody();
 
         System.out.println(hallInfoResponseEntity.getStatusCode());
@@ -37,7 +37,7 @@ public class ScheduleService {
     }
     public MovieInfo movieInfo (String movieId){
         ResponseEntity<MovieInfo> movieInfoResponseEntity = restTemplate
-                .getForEntity("http://localhost:8081/movies/" + movieId, MovieInfo.class);
+                .getForEntity("http://localhost:8080/movies/" + movieId, MovieInfo.class);
         MovieInfo movieInfo = movieInfoResponseEntity.getBody();
         System.out.println(movieInfoResponseEntity.getStatusCode());
         return movieInfo;
@@ -125,6 +125,10 @@ public class ScheduleService {
         MovieInfo movieInfo = this.movieInfo(schedule.getMovieId());
 
         return new ScheduleGet(schedule, venueInfo, hallInfo, movieInfo);
+    }
+
+    public Schedule getScheduleByIdForTicket(String id){
+        return scheduleRepository.findById(id).get();
     }
 
     public String updateSchedule(String id, ScheduleUpdate scheduleUpdate){

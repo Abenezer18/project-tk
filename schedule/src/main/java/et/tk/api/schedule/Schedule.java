@@ -32,7 +32,6 @@ public class Schedule {
     private String endTime;
     private String dateOfPublish;
     private String lastUpdated;
-    private String all; // .find all is not working
 
     public Schedule (SchedulePost schedulePost){
         this.movieId = schedulePost.getMovieId();
@@ -41,7 +40,6 @@ public class Schedule {
         this.startTime = schedulePost.getStartTime();
         this.endTime = schedulePost.getEndTime();
         this.dateOfPublish = LocalDateTime.now().toString();
-        this.all = "0";
     }
     public Schedule (ScheduleUpdate scheduleUpdate){
         this.movieId = scheduleUpdate.getMovieId();

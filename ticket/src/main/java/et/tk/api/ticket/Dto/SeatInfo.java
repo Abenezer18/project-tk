@@ -12,6 +12,7 @@ import lombok.Setter;
 public class SeatInfo {
     private String id;
     private String Row;
+    private Integer number;
     private Integer Number;
-    private Boolean seatStatus;
+    private boolean seatStatus;
 }

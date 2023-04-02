@@ -14,22 +14,22 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public String createNewUser(User user){
+    public String createUser(User user){
         user.setName(user.getName().toLowerCase());
         user.setEmail(user.getEmail().toLowerCase());
 
-        if (user.getPhoneNumber().length() != 9) // must start from 9...
-            return "phone";
         if (userRepository.findByName(user.getName()).isPresent())
             return "name";
         if (userRepository.findByEmail(user.getEmail()).isPresent())
             return "email";
+        if (user.getPhoneNumber().length() != 9) // must start from 9...
+            return "phone";
 
         userRepository.save(new User(user));
         return "added";
     }
 
-    public List<User> allUsers(){
+    public List<User> getUsers(){
         return userRepository.findAll();
     }
 
@@ -53,18 +53,19 @@ public class UserService {
             return "phone";
         userRepository.deleteById(id);
 
-        Optional<User> nameCheck = userRepository.findByName(user.getName());
-        if (nameCheck.isPresent()) {
+        Optional<User> checker;
+        checker = userRepository.findByName(user.getName());
+        if (checker.isPresent()) {
             userRepository.save(userTempo);
             return "name";
         }
-        Optional<User> emailCheck = userRepository.findByEmail(user.getEmail());
-        if (emailCheck.isPresent()) {
+        checker = userRepository.findByEmail(user.getEmail());
+        if (checker.isPresent()) {
             userRepository.save(userTempo);
             return "email";
         }
-        Optional<User> phoneCheck = userRepository.findByPhoneNumber(user.getPhoneNumber());
-        if (phoneCheck.isPresent()) {
+        checker= userRepository.findByPhoneNumber(user.getPhoneNumber());
+        if (checker.isPresent()) {
             userRepository.save(userTempo);
             return "phone";
         }
@@ -72,10 +73,10 @@ public class UserService {
         return "updated";
     }
 
-    public String deleteUser(String id) {
+    public int deleteUser(String id) {
         if (this.getUserById(id) == null)
-            return "not_found";
+            return 0;
         userRepository.deleteById(id);
-        return "deleted";
+        return 1;
     }
 }

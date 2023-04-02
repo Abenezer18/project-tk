@@ -31,7 +31,7 @@ public class TicketService {
     public ScheduleInfo scheduleInfo (String scheduleId){
 
         ResponseEntity<ScheduleInfo> scheduleInfoResponseEntity = restTemplate
-                .getForEntity("http://localhost:8082/api/schedules/" + scheduleId, ScheduleInfo.class);
+                .getForEntity("http://localhost:8082/api/schedules/ticket/" + scheduleId, ScheduleInfo.class);
         ScheduleInfo scheduleInfo = scheduleInfoResponseEntity.getBody();
         System.out.println(scheduleInfoResponseEntity.getStatusCode());
         return scheduleInfo;
@@ -39,7 +39,7 @@ public class TicketService {
     public SeatInfo seatInfo (String seatId){
 
         ResponseEntity<SeatInfo> seatInfoResponseEntity = restTemplate
-                .getForEntity("http://localhost:8080/api/seats/" + seatId, SeatInfo.class);
+                .getForEntity("http://localhost:8081/api/seats/" + seatId, SeatInfo.class);
         SeatInfo seatInfo = seatInfoResponseEntity.getBody();
         System.out.println(seatInfoResponseEntity.getStatusCode());
         return seatInfo;
@@ -54,20 +54,22 @@ public class TicketService {
         if (scheduleInfo == null)
             return "schedule";
 
-        List<SeatInfo> seatInfoList = new ArrayList<>();
+        List<SeatInfo> seatInfoList = new ArrayList<>(); // to check seat status
 
         for (String seat : ticketPost.getSeatIds()) {
-            seatInfoList.add(this.seatInfo(seat));
+            SeatInfo seatInfo = this.seatInfo(seat);
+            seatInfoList.add(seatInfo);
+            System.out.println("\n\n "+seatInfo.isSeatStatus()+" \n\n");
+            if (seatInfo.isSeatStatus())
+                return ("seat : " + seatInfo.getRow() + seatInfo.getNumber() + " is unavailable");
+            else {          // setting the seat status true
+                seatInfo.setSeatStatus(true);
+                System.out.println("\n\n"+ seatInfo.isSeatStatus() +"\n\n");
+                restTemplate.put("http://localhost:8081/api/seats/" + seatInfo.getId(), seatInfo);
+            }
         }
-
-        CollectionUtils.filter(seatInfoList, o -> ((SeatInfo) o).getSeatStatus().equals(false)); // checking if seat is booked
-
-        if (seatInfoList.isEmpty()) {
-            ticketRepository.save(new Ticket(ticketPost));
-            return "created";
-        } else {
-            return seatInfoList.toString();
-        }
+        ticketRepository.save(new Ticket(ticketPost));
+        return "created";
     }
 
     public List<Ticket> getAllTickets(){

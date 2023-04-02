@@ -17,7 +17,7 @@ public class Seat {
     private String id;
     private String row;
     private int number;
-
+    private boolean seatStatus;
     private String hallId;
 
     public Seat(String row, int number, String hallId) {
@@ -29,5 +29,6 @@ public class Seat {
         this.setRow(seatDto.getRow());
         this.setNumber(seatDto.getNumber());
         this.setHallId(hallId);
+        this.seatStatus = false;
     }
 }

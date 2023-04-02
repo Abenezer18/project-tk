@@ -20,9 +20,6 @@ public class VenueController {
     @Autowired
     private VenueService venueService;
 
-    @Autowired
-    private VenueRepository venueRepository;
-
     @Operation(summary = "Create Venue", description = "Creates new venue")
     @ApiResponse(responseCode = "201", description = "New venue created",
                     content = {@Content(mediaType = "application/json",

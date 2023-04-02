@@ -14,10 +14,7 @@ public class SeatService {
 
     public SeatDto getSeat(String id) {
         Optional<Seat> seatOptional = seatRepository.findById(id);
-        if (seatOptional.isEmpty())
-            return null;
-        Seat seat = seatOptional.get();
-        return new SeatDto(seat);
+        return seatOptional.map(SeatDto::new).orElse(null);
     }
 
     public String updateSeat(String id, SeatDto seatDto) {
@@ -36,6 +33,8 @@ public class SeatService {
         if (check.isEmpty()) {
             seat.setRow(seatDto.getRow());
             seat.setNumber(seatDto.getNumber());
+            seat.setSeatStatus(seatDto.isSeatStatus());
+            System.out.println("\n\n" + seat.isSeatStatus() + "\n\n");
             seatRepository.save(seat);
             return "updated";
         } else {
