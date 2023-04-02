@@ -54,12 +54,8 @@ public class TicketService {
         if (scheduleInfo == null)
             return "schedule";
 
-        List<SeatInfo> seatInfoList = new ArrayList<>(); // to check seat status
-
         for (String seat : ticketPost.getSeatIds()) {
             SeatInfo seatInfo = this.seatInfo(seat);
-            seatInfoList.add(seatInfo);
-            System.out.println("\n\n "+seatInfo.isSeatStatus()+" \n\n");
             if (seatInfo.isSeatStatus())
                 return ("seat : " + seatInfo.getRow() + seatInfo.getNumber() + " is unavailable");
             else {          // setting the seat status true
@@ -86,17 +82,11 @@ public class TicketService {
     }
 
     public List<Ticket> getTicketsByUserId(String userId) {
-        Optional<Ticket> ticketOptional = ticketRepository.findByUserId(userId);
-        if (ticketOptional.isEmpty())
-            return null;
-        return ticketOptional.stream().toList();
+        return ticketRepository.findByUserId(userId);
     }
 
     public List<Ticket> getTicketsByScheduleId(String scheduleId) {
-        Optional<Ticket> ticketOptional = ticketRepository.findByScheduleId(scheduleId);
-        if (ticketOptional.isEmpty())
-            return null;
-        return ticketOptional.stream().toList();
+        return ticketRepository.findByScheduleId(scheduleId);
     }
 
     // Tobe used only by the gatekeeper

@@ -43,7 +43,7 @@ public class TicketController {
         return new ResponseEntity<>(ticket, HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<Ticket>> getTicketsByUserId(@PathVariable String userId){
         List<Ticket> ticketList = ticketService.getTicketsByUserId(userId);
         if (ticketList == null)
@@ -51,7 +51,7 @@ public class TicketController {
         return new ResponseEntity<>(ticketList, HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/{scheduleId}")
+    @GetMapping("/schedule/{scheduleId}")
     public ResponseEntity<List<Ticket>> getTicketsByScheduleId(@PathVariable String scheduleId){
         List<Ticket> ticketList = ticketService.getTicketsByScheduleId(scheduleId);
         if (ticketList == null)
@@ -59,7 +59,7 @@ public class TicketController {
         return new ResponseEntity<>(ticketList, HttpStatus.NOT_FOUND);
     }
 
-    // Tobe used only by the gatekeeper
+    // To be used only by the gatekeeper
     @PutMapping("/gatekeeper/{id}")
     public ResponseEntity<String> updateTicketStatus(@PathVariable String id){
         String result = ticketService.updateTicketStatus(id);
