@@ -28,6 +28,7 @@ public class User {
         this.setName(user.getName());
         this.setEmail(user.getEmail());
         this.setPhoneNumber(user.getPhoneNumber());
+        this.setTicketIdList(user.getTicketIdList());
     }
 
     // adding ticket to list

@@ -22,6 +22,7 @@ public class Venue {
     private String address;
     private String email;
     private String clientId;
+    private String venueAdminId; // Restructure Dtos
 
     public Venue (VenueDto venueDto){
         this.name = venueDto.getName();

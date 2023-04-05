@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/venues")
@@ -83,9 +84,9 @@ public class VenueController {
     @PostMapping("/{venueId}/halls")
     public ResponseEntity<String> createHall(@PathVariable String venueId, @RequestBody HallDto hallDto) {
         String status = venueService.createHall(venueId, hallDto);
-        if (status == "name")
+        if (Objects.equals(status, "name"))
             return new ResponseEntity<>("name exists!", HttpStatus.FOUND);
-        else if (status == "venue")
+        else if (Objects.equals(status, "venue"))
             return new ResponseEntity<>("venue dose not exist!", HttpStatus.NOT_FOUND);
         return new ResponseEntity<>("Hall created", HttpStatus.CREATED);
     }
@@ -96,5 +97,13 @@ public class VenueController {
         if (hallDtos == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(hallDtos,HttpStatus.FOUND);
+    }
+
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<String> updateVenueAdmin(@PathVariable String id, @RequestBody String venueAdminId) {
+        String status = venueService.updateVenueAdmin(id, venueAdminId);
+        if (status == "venue")
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

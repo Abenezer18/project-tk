@@ -1,20 +1,17 @@
-package et.tk.api.ticket.Dto;
+package et.tk.api.userManagement.venueAdmin;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserInfo {
+public class VenueInfo {
     private String id;
-    private String userName;
+    private String name;
+    private String address;
     private String email;
-    private String phoneNo;
-    private String ticketId;
 }

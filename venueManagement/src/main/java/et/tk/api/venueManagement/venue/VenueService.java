@@ -130,4 +130,17 @@ public class VenueService {
         } else
             return "name";
     }
+
+
+    // to be used only by system admin
+    public String updateVenueAdmin(String id, String venueAdminId) {
+        Optional<Venue> venueOptional = venueRepository.findById(id);
+        if (venueOptional.isEmpty())
+            return "venue";
+        Venue venue = venueOptional.get();
+        venue.setVenueAdminId(venueAdminId);
+        venueRepository.deleteById(id);
+        venueRepository.save(venue);
+        return "updated";
+    }
 }

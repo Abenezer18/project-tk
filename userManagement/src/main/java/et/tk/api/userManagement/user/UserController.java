@@ -78,6 +78,23 @@ public class UserController {
         return new ResponseEntity<>("Unknown error",HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    //to be accessed only by ticket service
+    @PutMapping("/ticket/{id}")
+    public ResponseEntity<String> updateTicketList(@PathVariable String id, @RequestBody String ticketId) {
+        System.out.println("\n\n here \n\n");
+        String status = userService.updateTicketList(id, ticketId);
+
+        switch (status) {
+            case "user" ->{
+                return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
+            }
+            case "updated" ->{
+                return new ResponseEntity<>("updated",HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>("Unknown error",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable String id) {
         int status = userService.deleteUser(id);

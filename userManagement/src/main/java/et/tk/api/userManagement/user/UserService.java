@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,9 @@ public class UserService {
             return "email";
         if (user.getPhoneNumber().length() != 9) // must start from 9...
             return "phone";
-
+        List<String> sample = new ArrayList<>();
+        sample.add("tickets");
+        user.setTicketIdList(sample);
         userRepository.save(new User(user));
         return "added";
     }
@@ -69,7 +72,20 @@ public class UserService {
             userRepository.save(userTempo);
             return "phone";
         }
-        userRepository.save(user);
+        userRepository.save(user); // add dto removing the ticket list
+        return "updated";
+    }
+
+    public String updateTicketList(String id, String ticketId) {
+        User userTempo = this.getUserById(id);
+        if (userTempo == null)
+            return "user";
+        userRepository.deleteById(id);
+
+        List<String> tickets = new ArrayList<>(userTempo.getTicketIdList());
+        tickets.add(ticketId);
+        userTempo.setTicketIdList(tickets);
+        userRepository.save(userTempo);
         return "updated";
     }
 

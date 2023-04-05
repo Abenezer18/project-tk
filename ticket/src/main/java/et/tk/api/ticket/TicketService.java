@@ -6,8 +6,11 @@ import et.tk.api.ticket.Dto.TicketPost;
 import et.tk.api.ticket.Dto.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ public class TicketService {
         System.out.println(userInfoResponseEntity.getStatusCode());
         return userInfo;
     }
+
     public ScheduleInfo scheduleInfo (String scheduleId){
 
         ResponseEntity<ScheduleInfo> scheduleInfoResponseEntity = restTemplate
@@ -36,13 +40,17 @@ public class TicketService {
         System.out.println(scheduleInfoResponseEntity.getStatusCode());
         return scheduleInfo;
     }
-    public SeatInfo seatInfo (String seatId){
 
-        ResponseEntity<SeatInfo> seatInfoResponseEntity = restTemplate
-                .getForEntity("http://localhost:8081/api/seats/" + seatId, SeatInfo.class);
-        SeatInfo seatInfo = seatInfoResponseEntity.getBody();
-        System.out.println(seatInfoResponseEntity.getStatusCode());
-        return seatInfo;
+    public ResponseEntity<SeatInfo> seatInfo (String seatId){
+
+        ResponseEntity<SeatInfo> seatInfoResponseEntity;
+        try {
+            seatInfoResponseEntity =  restTemplate
+                    .getForEntity("http://localhost:8081/api/seats/" + seatId, SeatInfo.class);
+            return new ResponseEntity<>(seatInfoResponseEntity.getBody(), HttpStatus.OK);
+        } catch (HttpClientErrorException e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public String createTicket(TicketPost ticketPost){
@@ -64,7 +72,13 @@ public class TicketService {
                 restTemplate.put("http://localhost:8081/api/seats/" + seatInfo.getId(), seatInfo);
             }
         }
-        ticketRepository.save(new Ticket(ticketPost));
+        Ticket ticket = new Ticket(ticketPost);
+        ticketRepository.save(ticket);
+        userInfo.setTicketId(ticket.getId());
+        System.out.println(userInfo.getId());
+        System.out.println(ticket.getId());
+        restTemplate.put("http://localhost:8084/api/users/ticket/" + userInfo.getId() , ticket.getId());
+        System.out.println(ticket.getId());
         return "created";
     }
 
