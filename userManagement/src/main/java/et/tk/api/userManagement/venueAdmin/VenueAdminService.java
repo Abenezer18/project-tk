@@ -14,10 +14,8 @@ import java.util.Optional;
 
 @Service
 public class VenueAdminService {
-
     @Autowired
     private VenueAdminRepository venueAdminRepository;
-
     @Autowired
     private RestTemplate restTemplate;
 
@@ -50,7 +48,7 @@ public class VenueAdminService {
         return venueAdminRepository.findById(id).orElse(null);
     }
 
-    public VenueAdmin getUserByVenueId(String venueId){
+    public VenueAdmin getAdminByVenueId(String venueId){
         return venueAdminRepository.findByVenueId(venueId).orElse(null);
     }
 
@@ -61,7 +59,15 @@ public class VenueAdminService {
         VenueAdmin venueAdmin1 = venueAdminTempo.get();
         venueAdmin1.setName(venueAdmin.getName());
 
+        venueAdminRepository.deleteById(id);
         venueAdminRepository.save(venueAdmin1);
         return "updated";
+    }
+
+    public int deleteVenueAdmin(String id){
+        if (this.getVenueAdminById(id) == null)
+            return 0;
+        venueAdminRepository.deleteById(id);
+        return 1;
     }
 }
