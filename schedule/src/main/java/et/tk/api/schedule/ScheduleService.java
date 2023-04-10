@@ -43,6 +43,8 @@ public class ScheduleService {
         return movieInfo;
     }
 
+
+
     public String createSchedule(String movieId, String hallId, SchedulePost schedulePost){
         HallInfo hallInfo = this.hallInfo(hallId); // checking if hall exists
         if (hallInfo == null)

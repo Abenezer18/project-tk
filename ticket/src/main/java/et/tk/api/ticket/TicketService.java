@@ -63,7 +63,8 @@ public class TicketService {
             return "schedule";
 
         for (String seat : ticketPost.getSeatIds()) {
-            SeatInfo seatInfo = this.seatInfo(seat);
+            SeatInfo seatInfo = this.seatInfo(seat).getBody();
+            assert seatInfo != null;
             if (seatInfo.isSeatStatus())
                 return ("seat : " + seatInfo.getRow() + seatInfo.getNumber() + " is unavailable");
             else {          // setting the seat status true

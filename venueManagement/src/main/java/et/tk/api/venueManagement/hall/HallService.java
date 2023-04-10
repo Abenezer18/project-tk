@@ -25,10 +25,7 @@ public class HallService {
     public HallDto getHall(String hallId) {
         Optional<Hall> hallOptional = hallRepository.findById(hallId);
 
-        if (hallOptional.isPresent())
-            return new HallDto(hallOptional.get());
-        else
-            return null;
+        return hallOptional.map(HallDto::new).orElse(null);
     }
 
     public String updateHall(String hallId, HallDto hallDto) {
@@ -60,6 +57,10 @@ public class HallService {
 
         if (hallOptional.isPresent()) {
             hallRepository.deleteById(hallId);
+            List<SeatDto> getSeats = this.getAllSeats(hallId);
+            for (SeatDto seatDto:getSeats){
+                seatRepository.deleteByHallId(seatDto.getHallId());
+            }
             return "deleted";
         } else {
             return "not found";

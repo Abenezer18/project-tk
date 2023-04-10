@@ -57,6 +57,7 @@ public class MovieService {
             return null;
         return new MovieDetailedResponse(movie.get());
     }
+
     // search by partial title
     public List<MovieMinimalistView> search(String partialString) {
         Query query = new Query();

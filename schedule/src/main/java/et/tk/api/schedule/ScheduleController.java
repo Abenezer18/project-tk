@@ -45,6 +45,7 @@ public class ScheduleController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
     @GetMapping("/movie/{movieId}")
     public ResponseEntity<List<ScheduleGet>> getSchedulesByMovie(@PathVariable String movieId) {
         List<ScheduleGet> result = scheduleService.getSchedulesByMovie(movieId);
@@ -52,6 +53,7 @@ public class ScheduleController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<ScheduleGet> getScheduleById(@PathVariable String id) {
         ScheduleGet result = scheduleService.getScheduleById(id);

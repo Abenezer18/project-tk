@@ -22,10 +22,15 @@ import java.lang.String;
 @Document("schedule")
 @Builder
 public class Schedule {
+    enum movieType{
+        local,
+        international
+    }
 
     @Id
     private String id;
     private String movieId;
+    private movieType movieType; // local or international
     private String hallId;
     private String date;
     private String startTime;

@@ -58,9 +58,8 @@ public class VenueService {
 
     public VenueInfoView getVenueById(String id) {
         Optional<Venue> venueOptional = venueRepository.findById(id);
-        if (venueOptional.isEmpty()) // check if optional is empty
-            return null;
-        return new VenueInfoView(venueOptional.get());
+        // check if optional is empty
+        return venueOptional.map(VenueInfoView::new).orElse(null);
     }
 
     public String updateVenue(String id, VenueDto venueDto) {
@@ -85,6 +84,13 @@ public class VenueService {
         Optional<Venue> venueOptional = venueRepository.findById(id);
         if (venueOptional.isPresent()) {
             venueRepository.deleteById(id);
+            List<HallDto> getHalls = this.getHallsByVenueId(id);
+            if (getHalls == null)
+                return "deleted";
+            for (HallDto hallDto:getHalls) {  // deleting all the halls and seats inside a venue
+                seatRepository.deleteByHallId(hallDto.getId());
+                hallRepository.deleteById(hallDto.getId());
+            }
             return "deleted";
         } else {
             return "not found";
@@ -106,11 +112,10 @@ public class VenueService {
             return null;
         List<HallDetailedResponse> hallDetailedResponses = halls.stream().map(HallDetailedResponse::new).toList();
 
-        for (int i = 0; i < hallDetailedResponses.size(); i++) {
-            String hallId = hallDetailedResponses.get(i).getId();
+        for (HallDetailedResponse hallDetailedResponse : hallDetailedResponses) {
+            String hallId = hallDetailedResponse.getId();
             List<Seat> seatsInHall = seatRepository.findByHallId(hallId);
-
-            hallDetailedResponses.get(i).setSeats(seatsInHall);
+            hallDetailedResponse.setSeats(seatsInHall);
         }
         return hallDetailedResponses;
     }
