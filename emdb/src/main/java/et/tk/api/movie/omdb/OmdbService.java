@@ -1,15 +1,10 @@
-package et.tk.api.emdb.omdb;
+package et.tk.api.movie.omdb;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OmdbService {
@@ -31,6 +26,16 @@ public class OmdbService {
         String movieInfoResponseEntity;
         try {
             movieInfoResponseEntity = restTemplate.getForObject("http://www.omdbapi.com/?s="+title+"&apikey=70bdc566", String.class);
+        } catch (HttpClientErrorException e) {
+            return null;
+        }
+        return movieInfoResponseEntity;
+    }
+
+    public String searchById (String id){
+        String movieInfoResponseEntity;
+        try {
+            movieInfoResponseEntity = restTemplate.getForObject("http://www.omdbapi.com/?i="+id+"&apikey=70bdc566", String.class);
         } catch (HttpClientErrorException e) {
             return null;
         }

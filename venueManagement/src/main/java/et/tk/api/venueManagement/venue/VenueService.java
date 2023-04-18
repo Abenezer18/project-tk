@@ -62,6 +62,14 @@ public class VenueService {
         return venueOptional.map(VenueInfoView::new).orElse(null);
     }
 
+    public List<Venue> getVenuesByClientId(String id) {
+        List<Venue> venues = venueRepository.findAll();
+        CollectionUtils.filter(venues, o -> ((Venue) o).getClientId().equals(id));
+        if (venues.isEmpty())
+            return null;
+        return venues;
+    }
+
     public String updateVenue(String id, VenueDto venueDto) {
         Optional<Venue> venueOptional = venueRepository.findById(id);
         System.out.println(venueOptional); // display old data
@@ -137,15 +145,15 @@ public class VenueService {
     }
 
 
-    // to be used only by system admin
-    public String updateVenueAdmin(String id, String venueAdminId) {
-        Optional<Venue> venueOptional = venueRepository.findById(id);
-        if (venueOptional.isEmpty())
-            return "venue";
-        Venue venue = venueOptional.get();
-        venue.setVenueAdminId(venueAdminId);
-        venueRepository.deleteById(id);
-        venueRepository.save(venue);
-        return "updated";
-    }
+//    // to be used only by system admin
+//    public String updateVenueAdmin(String id, String venueAdminId) {
+//        Optional<Venue> venueOptional = venueRepository.findById(id);
+//        if (venueOptional.isEmpty())
+//            return "venue";
+//        Venue venue = venueOptional.get();
+//        venue.setVenueAdminId(venueAdminId);
+//        venueRepository.deleteById(id);
+//        venueRepository.save(venue);
+//        return "updated";
+//    }
 }

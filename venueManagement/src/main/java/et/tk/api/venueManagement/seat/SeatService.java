@@ -5,6 +5,7 @@ import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -33,8 +34,6 @@ public class SeatService {
         if (check.isEmpty()) {
             seat.setRow(seatDto.getRow());
             seat.setNumber(seatDto.getNumber());
-            seat.setSeatStatus(seatDto.isSeatStatus());
-            System.out.println("\n\n" + seat.isSeatStatus() + "\n\n");
             seatRepository.save(seat);
             return "updated";
         } else {
@@ -49,5 +48,22 @@ public class SeatService {
             return "not found";
         seatRepository.deleteById(id);
         return "deleted";
+    }
+
+    // TOTALLY NOT CORRECT ... CHANGE ALL THE CODE BELOW
+    public String updateTicketIdList (String id) {
+        Optional<Seat> seatOptional = seatRepository.findById(id);
+        if (seatOptional.isEmpty())
+            return "not found";
+        Seat seat = seatOptional.get();
+        List<String> ticketIds = seat.getTicketIds();
+        for (String ticketId : ticketIds) {
+            if (Objects.equals(ticketId, id))
+                return "seat";
+        }
+        ticketIds.add(id);
+        seat.setTicketIds(ticketIds);
+        seatRepository.save(seat);
+        return "updated";
     }
 }

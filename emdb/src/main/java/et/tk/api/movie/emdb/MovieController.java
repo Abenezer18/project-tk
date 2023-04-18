@@ -1,15 +1,14 @@
-package et.tk.api.emdb.movie;
+package et.tk.api.movie.emdb;
 
 import java.util.List;
+import java.util.Objects;
 
-import et.tk.api.emdb.movie.dto.MovieDetailedResponse;
-import et.tk.api.emdb.movie.dto.MovieMinimalistView;
+import et.tk.api.movie.emdb.dto.MovieMinimalistView;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import et.tk.api.emdb.movie.dto.MoviePostAndUpdate;
 
 @RestController
 public class MovieController {
@@ -24,11 +23,9 @@ public class MovieController {
 
     //POST new movie
     @PostMapping("/movies")
-    public ResponseEntity<String> addMovie(@RequestBody MoviePostAndUpdate m){
-        String status =  movieService.addMovie(m);
-
-        if (status=="name")
-            return new ResponseEntity<>("Title already exists", HttpStatus.FOUND);
+    public ResponseEntity<String> addMovie(@RequestBody Movie movie){
+        if (movieService.addMovie(movie).equals("name"))
+            return new ResponseEntity<>("Title already exists", HttpStatus.BAD_REQUEST);
         else
             return new ResponseEntity<>("Movie added", HttpStatus.OK);
     }
@@ -36,24 +33,19 @@ public class MovieController {
     //GET all movies
     @GetMapping("/movies")
     public ResponseEntity<List<MovieMinimalistView>> getAllMovies() {
-        List<MovieMinimalistView> result = movieService.getAllMovies();
-
-        if (result == null)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(result, HttpStatus.OK) ;
+        return new ResponseEntity<>(movieService.getAllMovies(), HttpStatus.OK) ;
     }
 
     @GetMapping("/movies/{id}")
-    public ResponseEntity<MovieDetailedResponse> getMovieById(@PathVariable String id) {
-        MovieDetailedResponse result = movieService.getMovieById(id);
-
+    public ResponseEntity<Movie> getMovieById(@PathVariable String id) {
+        Movie result = movieService.getMovieById(id);
         if (result == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(result, HttpStatus.OK) ;
     }
 
     //GET movie by title using search repository
-    @GetMapping("/movies/title/{title}")
+    @GetMapping("/movies/search/{title}")
     public ResponseEntity<List<MovieMinimalistView>> search(@PathVariable String title){
 
         List<MovieMinimalistView> searchResult = movieService.search(title);
@@ -65,13 +57,13 @@ public class MovieController {
 
     //UPDATE movie by id
     @PutMapping("/movies/{id}")
-    public ResponseEntity<String> updateMovie(@RequestBody MoviePostAndUpdate mov, @PathVariable String id){
-        String status = movieService.updateMovie(id, mov);
+    public ResponseEntity<String> updateMovie(@RequestBody Movie movie, @PathVariable String id){
+        String status = movieService.updateMovie(id, movie);
 
-        if (status == "not found")
-            return new ResponseEntity<>("Movie not found!", HttpStatus.NOT_FOUND);
-        else if (status == "name")
-            return new ResponseEntity<>("Title already exists", HttpStatus.FOUND);
+        if (Objects.equals(status, "not found"))
+            return new ResponseEntity<>("Movie not found!", HttpStatus.BAD_REQUEST);
+        else if (Objects.equals(status, "name"))
+            return new ResponseEntity<>("Title already exists", HttpStatus.BAD_REQUEST);
         else
             return new ResponseEntity<>("Updated successfully!", HttpStatus.OK);
     }
@@ -79,8 +71,8 @@ public class MovieController {
     @DeleteMapping("/movies/{id}")
     public ResponseEntity<String> deleteMovie(@PathVariable String id){
         String status = movieService.deleteMovie(id);
-        if (status == "not found")
-            return new ResponseEntity<>("Movie not found!", HttpStatus.NOT_FOUND);
+        if (status.equals("not found"))
+            return new ResponseEntity<>("Movie not found!", HttpStatus.BAD_REQUEST);
         else
             return new ResponseEntity<>("Movie deleted!", HttpStatus.OK);
     }

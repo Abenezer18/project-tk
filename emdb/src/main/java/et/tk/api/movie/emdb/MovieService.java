@@ -1,12 +1,10 @@
-package et.tk.api.emdb.movie;
+package et.tk.api.movie.emdb;
 
 import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import et.tk.api.emdb.movie.dto.MovieDetailedResponse;
-import et.tk.api.emdb.movie.dto.MovieMinimalistView;
-import et.tk.api.emdb.movie.dto.MoviePostAndUpdate;
+import et.tk.api.movie.emdb.dto.MovieMinimalistView;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -28,11 +26,10 @@ public class MovieService {
     }
 
     //POST new movie to DB
-    public String addMovie(MoviePostAndUpdate moviePostAndUpdate) {
-        Optional<Movie> optionalMovie = movieRepository.findByTitle(moviePostAndUpdate.getTitle());
-        Movie movie = new Movie(moviePostAndUpdate);
-
+    public String addMovie(Movie movie){
+        Optional<Movie> optionalMovie = movieRepository.findByTitle(movie.getTitle());
         if (optionalMovie.isEmpty()) {
+            movie.setId(null);
             movieRepository.save(movie);
             return "added";
         }
@@ -43,42 +40,34 @@ public class MovieService {
 
     // GET all movies form DB
     public List<MovieMinimalistView> getAllMovies(){
-
-        List<Movie> movies = movieRepository.findAll();
-        if (movies.isEmpty())
-            return null;
-        return movies.stream().map(MovieMinimalistView::new).toList();
+        return movieRepository.findAll().stream().map(MovieMinimalistView::new).toList();
     }
 
     // GET  movie by id form DB
-    public MovieDetailedResponse getMovieById(String id){
+    public Movie getMovieById(String id){
         Optional<Movie> movie = movieRepository.findById(id);
-        if (movie.isEmpty())
-            return null;
-        return new MovieDetailedResponse(movie.get());
+        return movie.orElse(null);
     }
 
     // search by partial title
-    public List<MovieMinimalistView> search(String partialString) {
+    public List<MovieMinimalistView> search(String partialString){
         Query query = new Query();
         query.addCriteria(Criteria.where("title").regex(".*" + partialString + ".*"));
         List<Movie> result = mongoTemplate.find(query, Movie.class);
-        List<MovieMinimalistView> minimal = result.stream().map(MovieMinimalistView::new).toList();
-        return minimal;
+        return result.stream().map(MovieMinimalistView::new).toList();
     }
 
     //UPDATE movie using id
-    public String updateMovie(String id, MoviePostAndUpdate moviePostAndUpdate){
+    public String updateMovie(String id, Movie movie){
         Optional<Movie> optionalMovie = movieRepository.findById(id);
         if (optionalMovie.isEmpty())
             return "not found";
-        Movie movie = new Movie(moviePostAndUpdate);
-        Movie backUp = new Movie(new MoviePostAndUpdate(optionalMovie.get())); // saving a backup
-        backUp.setId(id); // setting id
+        movie.setId(optionalMovie.get().getId()); // re entering the movie id
+        Movie backUp = optionalMovie.get(); // saving a backup
         movieRepository.deleteById(id);
-        Optional<Movie> nameCheck = movieRepository.findByTitle(moviePostAndUpdate.getTitle());
+        Optional<Movie> nameCheck = movieRepository.findByTitle(movie.getTitle());
         if(nameCheck.isEmpty()){
-            movieRepository.save(movie);
+            movieRepository.save(movie); // updated
             return "updated";
         }
         else {
@@ -90,7 +79,6 @@ public class MovieService {
     //DELETE movie by id
     public String deleteMovie(String id) {
         Optional<Movie> optionalMovie = movieRepository.findById(id);
-
         if(optionalMovie.isPresent()){
             movieRepository.deleteById(id);
             return "deleted";

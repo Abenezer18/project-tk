@@ -1,4 +1,4 @@
-package et.tk.api.emdb;
+package et.tk.api.movie;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/api/seats")
 public class SeatController {
@@ -14,7 +16,6 @@ public class SeatController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SeatDto> getSeat(@PathVariable String id) {
-        System.out.println("\n\n gygy \n\n");
         SeatDto seat = seatService.getSeat(id);
         if (seat == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -35,8 +36,19 @@ public class SeatController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteSeat(@PathVariable String id) {
         String status = seatService.deleteSeat(id);
-        if (status == "not found")
+        if (Objects.equals(status, "not found"))
             return new ResponseEntity<>(status,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(status, HttpStatus.OK);
     }
+
+    @PutMapping("/ticket/{id}")
+    public ResponseEntity<String> updateTicketIdList(@PathVariable String id) {
+        String status = seatService.updateTicketIdList(id);
+        if (status == "not found")
+            return new ResponseEntity<>("Seat does not exist in hall", HttpStatus.NOT_FOUND);
+        else if (status == "seat") {
+            return new ResponseEntity<>("Seat taken.", HttpStatus.FOUND);
+        }
+        return new ResponseEntity<>("Updated", HttpStatus.FOUND);
+
 }

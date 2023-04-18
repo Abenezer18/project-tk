@@ -1,8 +1,6 @@
-package et.tk.api.emdb.movie.dto;
+package et.tk.api.movie.emdb.dto;
 
-import java.util.List;
-
-import et.tk.api.emdb.movie.Movie;
+import et.tk.api.movie.emdb.Movie;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
