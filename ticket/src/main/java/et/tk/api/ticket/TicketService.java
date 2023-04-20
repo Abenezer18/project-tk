@@ -35,7 +35,7 @@ public class TicketService {
     public ScheduleInfo scheduleInfo (String scheduleId){
 
         ResponseEntity<ScheduleInfo> scheduleInfoResponseEntity = restTemplate
-                .getForEntity("http://localhost:8082/api/schedules/ticket/" + scheduleId, ScheduleInfo.class);
+                .getForEntity("http://localhost:8082/api/schedules/" + scheduleId, ScheduleInfo.class);
         ScheduleInfo scheduleInfo = scheduleInfoResponseEntity.getBody();
         System.out.println(scheduleInfoResponseEntity.getStatusCode());
         return scheduleInfo;

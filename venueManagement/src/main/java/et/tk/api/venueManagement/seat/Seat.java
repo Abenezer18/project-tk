@@ -14,22 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 @Document(collection = "seats")
 public class Seat {
-
     @Id
     private String id;
     private String row;
     private int number;
     private String hallId;
     private List<String> ticketIds;
-
-    public Seat(String row, int number, String hallId) {
-        this.row = row;
-        this.number = number;
-        this.hallId = hallId;
-    }
-    public Seat(SeatDto seatDto, String hallId){
-        this.setRow(seatDto.getRow());
-        this.setNumber(seatDto.getNumber());
-        this.setHallId(hallId);
-    }
 }

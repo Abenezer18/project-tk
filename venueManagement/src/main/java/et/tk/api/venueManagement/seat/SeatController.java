@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -14,22 +15,39 @@ public class SeatController {
     @Autowired
     private SeatService seatService;
 
+    @PostMapping("/{hallId}/seats")
+    public ResponseEntity<String> createSeat(@PathVariable String hallId, @RequestBody Seat seat) {
+        String status = seatService.createSeat(hallId, seat);
+        if (Objects.equals(status, "hall"))
+            return new ResponseEntity<>("Hall does not exist",HttpStatus.NOT_FOUND);
+        else if (Objects.equals(status, "name")) {
+            return new ResponseEntity<>("Seat already exists",HttpStatus.FOUND);
+        } else
+            return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{hallId}/seats")
+    public ResponseEntity<List<Seat>> getAllSeats(@PathVariable String hallId) {
+        return new ResponseEntity<>(seatService.getAllSeats(hallId), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<SeatDto> getSeat(@PathVariable String id) {
-        SeatDto seat = seatService.getSeat(id);
+    public ResponseEntity<Seat> getSeat(@PathVariable String id) {
+        Seat seat = seatService.getSeat(id);
         if (seat == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(seat, HttpStatus.FOUND);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateSeat(@PathVariable String id, @RequestBody SeatDto seatDto) {
-        String status = seatService.updateSeat(id, seatDto);
-        if (status == "not exist")
+    @PutMapping("/{hallId}/{id}")
+    public ResponseEntity<String> updateSeat(@PathVariable String id,@PathVariable String hallId, @RequestBody Seat seat) {
+        String status = seatService.updateSeat(id, hallId, seat);
+        if (Objects.equals(status, "not exist"))
             return new ResponseEntity<>("Seat does not exist in hall", HttpStatus.NOT_FOUND);
-        else if (status == "name") {
+        else if (Objects.equals(status, "hall"))
+            return new ResponseEntity<>("Hall does not exist.", HttpStatus.FOUND);
+        else if (Objects.equals(status, "name"))
             return new ResponseEntity<>("seat exists, change name.", HttpStatus.FOUND);
-        }
         return new ResponseEntity<>("Updated", HttpStatus.FOUND);
     }
 
@@ -40,15 +58,4 @@ public class SeatController {
             return new ResponseEntity<>(status,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(status, HttpStatus.OK);
     }
-
-    @PutMapping("/ticket/{id}")
-    public ResponseEntity<String> updateTicketIdList(@PathVariable String id) {
-        String status = seatService.updateTicketIdList(id);
-        if (status == "not found")
-            return new ResponseEntity<>("Seat does not exist in hall", HttpStatus.NOT_FOUND);
-        else if (status == "seat") {
-            return new ResponseEntity<>("Seat taken.", HttpStatus.FOUND);
-        }
-        return new ResponseEntity<>("Updated", HttpStatus.FOUND);
-
 }

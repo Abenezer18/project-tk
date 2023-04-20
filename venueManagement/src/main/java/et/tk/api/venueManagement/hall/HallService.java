@@ -2,17 +2,12 @@ package et.tk.api.venueManagement.hall;
 
 import et.tk.api.venueManagement.seat.SeatRepository;
 import et.tk.api.venueManagement.venue.VenueRepository;
-import et.tk.api.venueManagement.seat.Seat;
-import et.tk.api.venueManagement.seat.SeatDto;
-import et.tk.api.venueManagement.seat.*;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -57,51 +52,10 @@ public class HallService {
 
         if (hallOptional.isPresent()) {
             hallRepository.deleteById(hallId);
-            List<SeatDto> getSeats = this.getAllSeats(hallId);
-            for (SeatDto seatDto:getSeats){
-                seatRepository.deleteByHallId(seatDto.getHallId());
-            }
             return "deleted";
         } else {
             return "not found";
         }
-    }
-
-    public String createSeat(String hallId, SeatDto seatDto) {
-        seatDto.setRow(seatDto.getRow().toUpperCase());
-        Optional<Hall> hallOptional = hallRepository.findById(hallId);
-        List<Seat> nameCheck = seatRepository.findByHallId(hallId);
-        CollectionUtils.filter(nameCheck, o -> ((Seat) o).getRow().equals(seatDto.getRow()));
-        CollectionUtils.filter(nameCheck, o -> ((Seat) o).getNumber() == seatDto.getNumber());
-
-        if (nameCheck.isEmpty()){
-            if (hallOptional.isPresent()) {
-                Hall hall = hallOptional.get(); // use this later
-                Seat seat = new Seat(seatDto, hallId);
-                seatRepository.save(seat);
-                return "created";
-            } else {
-                return "hall";
-            }
-        } else {
-            return "name";
-        }
-    }
-
-    public List<SeatDto> getAllSeats(String id) {
-        List<Seat> seats = seatRepository.findByHallId(id);
-        if (seats.isEmpty())
-            return null;
-        return seats.stream().map(this::convertToDto).collect(Collectors.toList());
-    }
-
-    private SeatDto convertToDto(Seat seat) {
-        SeatDto seatDto = new SeatDto();
-        seatDto.setId(seat.getId());
-        seatDto.setRow(seat.getRow());
-        seatDto.setNumber(seat.getNumber());
-        seatDto.setHallId(seat.getHallId());
-        return seatDto;
     }
 }
 

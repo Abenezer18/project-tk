@@ -5,13 +5,11 @@ import et.tk.api.venueManagement.hall.HallDetailedResponse;
 import et.tk.api.venueManagement.hall.HallDto;
 import et.tk.api.venueManagement.hall.HallRepository;
 import et.tk.api.venueManagement.seat.Seat;
-import et.tk.api.venueManagement.seat.SeatDto;
 import et.tk.api.venueManagement.seat.SeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,16 +56,9 @@ public class VenueService {
 
     public VenueInfoView getVenueById(String id) {
         Optional<Venue> venueOptional = venueRepository.findById(id);
-        // check if optional is empty
-        return venueOptional.map(VenueInfoView::new).orElse(null);
-    }
-
-    public List<Venue> getVenuesByClientId(String id) {
-        List<Venue> venues = venueRepository.findAll();
-        CollectionUtils.filter(venues, o -> ((Venue) o).getClientId().equals(id));
-        if (venues.isEmpty())
+        if (venueOptional.isEmpty()) // check if optional is empty
             return null;
-        return venues;
+        return new VenueInfoView(venueOptional.get());
     }
 
     public String updateVenue(String id, VenueDto venueDto) {
@@ -92,13 +83,6 @@ public class VenueService {
         Optional<Venue> venueOptional = venueRepository.findById(id);
         if (venueOptional.isPresent()) {
             venueRepository.deleteById(id);
-            List<HallDto> getHalls = this.getHallsByVenueId(id);
-            if (getHalls == null)
-                return "deleted";
-            for (HallDto hallDto:getHalls) {  // deleting all the halls and seats inside a venue
-                seatRepository.deleteByHallId(hallDto.getId());
-                hallRepository.deleteById(hallDto.getId());
-            }
             return "deleted";
         } else {
             return "not found";
@@ -120,10 +104,11 @@ public class VenueService {
             return null;
         List<HallDetailedResponse> hallDetailedResponses = halls.stream().map(HallDetailedResponse::new).toList();
 
-        for (HallDetailedResponse hallDetailedResponse : hallDetailedResponses) {
-            String hallId = hallDetailedResponse.getId();
+        for (int i = 0; i < hallDetailedResponses.size(); i++) {
+            String hallId = hallDetailedResponses.get(i).getId();
             List<Seat> seatsInHall = seatRepository.findByHallId(hallId);
-            hallDetailedResponse.setSeats(seatsInHall);
+
+            hallDetailedResponses.get(i).setSeats(seatsInHall);
         }
         return hallDetailedResponses;
     }
@@ -145,15 +130,15 @@ public class VenueService {
     }
 
 
-//    // to be used only by system admin
-//    public String updateVenueAdmin(String id, String venueAdminId) {
-//        Optional<Venue> venueOptional = venueRepository.findById(id);
-//        if (venueOptional.isEmpty())
-//            return "venue";
-//        Venue venue = venueOptional.get();
-//        venue.setVenueAdminId(venueAdminId);
-//        venueRepository.deleteById(id);
-//        venueRepository.save(venue);
-//        return "updated";
-//    }
+    // to be used only by system admin
+    public String updateVenueAdmin(String id, String venueAdminId) {
+        Optional<Venue> venueOptional = venueRepository.findById(id);
+        if (venueOptional.isEmpty())
+            return "venue";
+        Venue venue = venueOptional.get();
+        venue.setVenueAdminId(venueAdminId);
+        venueRepository.deleteById(id);
+        venueRepository.save(venue);
+        return "updated";
+    }
 }

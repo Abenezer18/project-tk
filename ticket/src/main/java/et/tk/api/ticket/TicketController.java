@@ -56,7 +56,7 @@ public class TicketController {
         List<Ticket> ticketList = ticketService.getTicketsByScheduleId(scheduleId);
         if (ticketList == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(ticketList, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(ticketList, HttpStatus.FOUND);
     }
 
     // To be used only by the gatekeeper

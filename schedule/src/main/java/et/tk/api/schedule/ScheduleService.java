@@ -3,12 +3,17 @@ package et.tk.api.schedule;
 import et.tk.api.schedule.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -19,142 +24,126 @@ public class ScheduleService {
     private RestTemplate restTemplate;
 
     public VenueInfo venueInfo (String venueId){
+        ResponseEntity<VenueInfo> venueInfoResponseEntity;
 
-        ResponseEntity<VenueInfo> venueInfoResponseEntity = restTemplate
-                .getForEntity("http://localhost:8081/api/venues/" + venueId, VenueInfo.class);
-        VenueInfo venueInfo = venueInfoResponseEntity.getBody();
-        System.out.println(venueInfoResponseEntity.getStatusCode());
-        return venueInfo;
+        try {
+            venueInfoResponseEntity = restTemplate
+                    .getForEntity("http://localhost:8081/api/venues/" + venueId, VenueInfo.class);
+        } catch (HttpStatusCodeException e) {
+            return null;
+        }
+        return venueInfoResponseEntity.getBody();
     }
     public HallInfo hallInfo (String hallId){
+        ResponseEntity<HallInfo> hallInfoResponseEntity;
 
-        ResponseEntity<HallInfo> hallInfoResponseEntity = restTemplate
-                .getForEntity("http://localhost:8081/api/halls/" + hallId, HallInfo.class);
-        HallInfo hallInfo = hallInfoResponseEntity.getBody();
-
-        System.out.println(hallInfoResponseEntity.getStatusCode());
-        return hallInfo;
+        try {
+            hallInfoResponseEntity = restTemplate
+                    .getForEntity("http://localhost:8081/api/halls/" + hallId, HallInfo.class);
+        } catch (HttpStatusCodeException e) {
+            return null;
+        }
+        return hallInfoResponseEntity.getBody();
     }
     public MovieInfo movieInfo (String movieId){
-        ResponseEntity<MovieInfo> movieInfoResponseEntity = restTemplate
-                .getForEntity("http://localhost:8080/movies/" + movieId, MovieInfo.class);
-        MovieInfo movieInfo = movieInfoResponseEntity.getBody();
-        System.out.println(movieInfoResponseEntity.getStatusCode());
-        return movieInfo;
+        ResponseEntity<MovieInfo> movieInfoResponseEntity;
+        try {
+            movieInfoResponseEntity = restTemplate
+                    .getForEntity("http://localhost:8080/movies/" + movieId, MovieInfo.class);
+        } catch (HttpStatusCodeException e) {
+            return null;
+        }
+        return movieInfoResponseEntity.getBody();
+    }
+    public String ticketInfo (String scheduleId){
+        ResponseEntity<TicketInfo> ticketInfoResponseEntity;
+        try {
+            ticketInfoResponseEntity = restTemplate
+                    .getForEntity("http://localhost:8083/api/tickets/schedule/" + scheduleId, TicketInfo.class);
+        } catch (HttpStatusCodeException e) {
+            return "internal";
+        }
+        if (ticketInfoResponseEntity.getStatusCode().equals(HttpStatus.FOUND)){
+            return "found";
+        } else {
+            return "not found";
+        }
     }
 
-
-
-    public String createSchedule(String movieId, String hallId, SchedulePost schedulePost){
+    public String createSchedule(String movieId, String hallId, Schedule schedule){
         HallInfo hallInfo = this.hallInfo(hallId); // checking if hall exists
         if (hallInfo == null)
             return "hall";
-        VenueInfo venueInfo = this.venueInfo(hallInfo.getVenueId());
+
         MovieInfo movieInfo = this.movieInfo(movieId);
         if (movieInfo == null)
             return "movie";
 
-//        // start here
-//        Schedule newSchedule = new Schedule(schedulePost);
-//        newSchedule.setHallId(hallId);
-//        newSchedule.setMovieId(movieId);
-//        scheduleRepository.save(newSchedule);
-//        return "booked";
-//        // end here
-
         List <Schedule> bookCheck = scheduleRepository.findAll();
         CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getHallId().equals(hallId));
-        CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getDate().equals(schedulePost.getDate()));
-        CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getStartTime().equals(schedulePost.getStartTime()));
+        CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getDate().equals(schedule.getDate()));
+        CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getStartTime().equals(schedule.getStartTime()));
 
         if (bookCheck.isEmpty()){
-            Schedule newSchedule = new Schedule(schedulePost);
-            newSchedule.setHallId(hallId);
-            newSchedule.setMovieId(movieId);
-            scheduleRepository.save(newSchedule);
+            schedule.setId(null);
+            schedule.setDateOfPublish(LocalDateTime.now().toString());
+            schedule.setLastUpdated(null);
+            schedule.setHallId(hallId);
+            schedule.setMovieId(movieId);
+            scheduleRepository.save(schedule);
             return null;
         } else {
             return "booked";
         }
     }
 
-    public List<ScheduleMinimalist> getAllSchedules(){
-
-        List<Schedule> scheduleList = scheduleRepository.findAll();
-//        Optional<Schedule> scheduleOptional = scheduleRepository.findById(id);
-        if (scheduleList.isEmpty())
-            return null;
-        return scheduleList.stream().map(ScheduleMinimalist::new).toList();
+    public List<Schedule> getAllSchedules(){
+        return scheduleRepository.findAll();
     }
 
-    public List<ScheduleGet> getSchedulesInHall(String hallId) {
+    public List<Schedule> getSchedulesInHall(String hallId) {
         Optional<Schedule> scheduleOptional = scheduleRepository.findByHallId(hallId);
         if (scheduleOptional.isEmpty())
             return null;
-        List<Schedule> scheduleList = scheduleOptional.stream().toList();
-        HallInfo hallInfo = this.hallInfo(hallId);
-        VenueInfo venueInfo = this.venueInfo(hallInfo.getVenueId());
-        List<ScheduleGet> scheduleGets = new ArrayList<>();
-        for (Schedule schedule : scheduleList) {
-            scheduleGets.add(new ScheduleGet(schedule, venueInfo, hallInfo));
-        }
-        return scheduleGets;
+        return scheduleOptional.stream().toList();
     }
 
-    public List<ScheduleGet> getSchedulesByMovie(String movieId) {
+    public List<Schedule> getSchedulesByMovie(String movieId) {
         Optional<Schedule> scheduleOptional = scheduleRepository.findByMovieId(movieId);
         if (scheduleOptional.isEmpty())
             return null;
-        List<Schedule> scheduleList = scheduleOptional.stream().toList();
-        List<ScheduleGet> scheduleGets = new ArrayList<>();
-        MovieInfo movieInfo = this.movieInfo(movieId);
-
-        for (Schedule schedule : scheduleList) {
-            HallInfo hallInfo = this.hallInfo(schedule.getHallId());
-            VenueInfo venueInfo = this.venueInfo(hallInfo.getVenueId());
-            scheduleGets.add(new ScheduleGet(schedule, venueInfo, hallInfo));
-        }
-        return scheduleGets.stream().toList();
+        return scheduleOptional.stream().toList();
     }
 
-    public ScheduleGet getScheduleById(String id){
-        Optional<Schedule> scheduleOptional = scheduleRepository.findById(id);
-        if (scheduleOptional.isEmpty())
-            return null;
-        Schedule schedule = scheduleOptional.get();
-        HallInfo hallInfo = this.hallInfo(schedule.getHallId());
-        VenueInfo venueInfo = this.venueInfo(hallInfo.getVenueId());
-        MovieInfo movieInfo = this.movieInfo(schedule.getMovieId());
-
-        return new ScheduleGet(schedule, venueInfo, hallInfo, movieInfo);
+    public Schedule getScheduleById(String id){
+        return scheduleRepository.findById(id).orElse(null);
     }
 
-    public Schedule getScheduleByIdForTicket(String id){
-        return scheduleRepository.findById(id).get();
-    }
-
-    public String updateSchedule(String id, ScheduleUpdate scheduleUpdate){
+    public String updateSchedule(String id, Schedule schedule){
         Optional<Schedule> scheduleOptional = scheduleRepository.findById(id);
         if (scheduleOptional.isEmpty())
             return "schedule";
         Schedule oldSchedule = scheduleOptional.get();
 
-        HallInfo hallInfo = this.hallInfo(scheduleUpdate.getHallId()); // checking if hall exists
+        HallInfo hallInfo = this.hallInfo(schedule.getHallId()); // checking if hall exists
         if (hallInfo == null)
             return "hallDoesNotExist";
 
-        MovieInfo movieInfo = this.movieInfo(scheduleUpdate.getMovieId());
+        MovieInfo movieInfo = this.movieInfo(schedule.getMovieId());
         if (movieInfo == null)
             return "movieDoesNotExist";
+
         scheduleRepository.deleteById(id);
 
-        List<Schedule> bookCheck = scheduleRepository.findByHallId(scheduleUpdate.getHallId()).stream().toList();
-        CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getDate().equals(scheduleUpdate.getDate()));
-        CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getStartTime().equals(scheduleUpdate.getStartTime()));
+        List<Schedule> bookCheck = scheduleRepository.findByHallId(schedule.getHallId()).stream().toList();
+        CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getDate().equals(schedule.getDate()));
+        CollectionUtils.filter(bookCheck, o -> ((Schedule) o).getStartTime().equals(schedule.getStartTime()));
 
         if (bookCheck.isEmpty()){
-            Schedule newSchedule = new Schedule(scheduleUpdate);
-            scheduleRepository.save(newSchedule);
+            schedule.setId(oldSchedule.getId());
+            schedule.setDateOfPublish(oldSchedule.getDateOfPublish());
+            schedule.setLastUpdated(LocalDateTime.now().toString());
+            scheduleRepository.save(schedule);
             return null;
         } else {
             scheduleRepository.save(oldSchedule);
@@ -166,6 +155,13 @@ public class ScheduleService {
         Optional<Schedule> schedule = scheduleRepository.findById(id);
         if (schedule.isEmpty())
             return null;
+
+        String ticket = this.ticketInfo(id);
+        if (Objects.equals(ticket, "found"))
+            return "ticket";
+        else if (Objects.equals(ticket, "internal"))
+            return "ticket info";
+
         scheduleRepository.deleteById(id);
         return "deleted";
     }
