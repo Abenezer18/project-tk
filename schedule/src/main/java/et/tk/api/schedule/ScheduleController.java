@@ -1,9 +1,5 @@
 package et.tk.api.schedule;
 
-import et.tk.api.schedule.dto.ScheduleGet;
-import et.tk.api.schedule.dto.ScheduleMinimalist;
-import et.tk.api.schedule.dto.SchedulePost;
-import et.tk.api.schedule.dto.ScheduleUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +17,11 @@ public class ScheduleController {
     @PostMapping("/{movieId}/{hallId}")
     public ResponseEntity<String> createSchedule(@PathVariable String movieId, @PathVariable String hallId, @RequestBody Schedule schedule) {
         String status = scheduleService.createSchedule(movieId, hallId, schedule);
-        if (status == "movie")
+        if (Objects.equals(status, "movie"))
             return new ResponseEntity<>("Movie does not exist", HttpStatus.NOT_FOUND);
-        else if (status == "hall")
+        else if (Objects.equals(status, "hall"))
             return new ResponseEntity<>("Hall does not exist", HttpStatus.NOT_FOUND);
-        else if (status == "booked")
+        else if (Objects.equals(status, "booked"))
             return new ResponseEntity<>("Hall already booked for the specified date and time", HttpStatus.CONFLICT);
         else
             return new ResponseEntity<>("Schedule created",HttpStatus.CREATED);

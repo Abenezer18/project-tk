@@ -58,4 +58,21 @@ public class SeatController {
             return new ResponseEntity<>(status,HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(status, HttpStatus.OK);
     }
+
+    // for ticket service
+    @PutMapping("/{ticketId}/{id}")
+    public ResponseEntity<String> updateTicketIdList(@PathVariable String id, @PathVariable String ticketId) {
+        String status = seatService.updateTicketIdList(id, ticketId);
+        if (Objects.equals(status, "not found"))
+            return new ResponseEntity<>("Seat does not exist in hall", HttpStatus.NOT_FOUND);
+        else if (Objects.equals(status, "ticket"))
+            return new ResponseEntity<>("Ticket does not exist.", HttpStatus.NOT_FOUND);
+        else if (Objects.equals(status, "ticket service"))
+            return new ResponseEntity<>("Ticket service error", HttpStatus.NOT_FOUND);
+        else if (Objects.equals(status, "seat"))
+            return new ResponseEntity<>("seat occupied", HttpStatus.FOUND);
+        else if (Objects.equals(status, "updated"))
+            return new ResponseEntity<>("Updated", HttpStatus.FOUND);
+        return new ResponseEntity<>("Unknown error", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

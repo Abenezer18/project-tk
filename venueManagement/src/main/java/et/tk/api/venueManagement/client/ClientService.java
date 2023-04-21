@@ -4,13 +4,17 @@ import et.tk.api.venueManagement.hall.Hall;
 import et.tk.api.venueManagement.hall.HallRepository;
 import et.tk.api.venueManagement.seat.Seat;
 import et.tk.api.venueManagement.seat.SeatRepository;
+import et.tk.api.venueManagement.seat.Ticket;
 import et.tk.api.venueManagement.venue.Venue;
 import et.tk.api.venueManagement.venue.VenueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -104,6 +108,16 @@ public class ClientService {
         Optional<Client> clientOptional = clientRepository.findById(id);
         if (clientOptional.isEmpty())
             return "client";
+
+//        // check if the client admin exists
+//        try {
+//            ResponseEntity<Ticket> ticket = restTemplate
+//                    .getForEntity("http://localhost:8083/api/users/" + clientAdminId, Ticket.class);
+//            if (ticket.getBody() == null)
+//                return "ticket";
+//        } catch (HttpClientErrorException e) {
+//            return "ticket service";
+//        }
 
         Client client = clientOptional.get();
         client.setClientAdminId(clientAdminId);

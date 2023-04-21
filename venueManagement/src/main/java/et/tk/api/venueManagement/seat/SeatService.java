@@ -105,7 +105,7 @@ public class SeatService {
             if (ticket.getBody() == null)
                 return "ticket";
         } catch (HttpClientErrorException e) {
-            return "ticket";
+            return "ticket service";
         }
 
         Seat seat = seatOptional.get();

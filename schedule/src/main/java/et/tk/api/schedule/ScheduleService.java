@@ -119,7 +119,7 @@ public class ScheduleService {
         return scheduleRepository.findById(id).orElse(null);
     }
 
-    public String updateSchedule(String id, Schedule schedule){
+    public String updateSchedule(String id, Schedule schedule) {
         Optional<Schedule> scheduleOptional = scheduleRepository.findById(id);
         if (scheduleOptional.isEmpty())
             return "schedule";
