@@ -44,7 +44,6 @@ public class VenueService {
     }
 
     public List<Venue> getVenuesByClientId(String id) {
-
         List<Venue> venues = venueRepository.findAll();
         CollectionUtils.filter(venues, o -> ((Venue) o).getClientId().equals(id));
 

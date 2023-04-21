@@ -4,6 +4,7 @@ import et.tk.api.venueManagement.seat.Seat;
 import et.tk.api.venueManagement.seat.SeatRepository;
 import et.tk.api.venueManagement.venue.VenueRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +14,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class HallService {
 
+    @Autowired
     private SeatRepository seatRepository;
+    @Autowired
     private HallRepository hallRepository;
+    @Autowired
     private VenueRepository venueRepository;
 
     public String createHall(String venueId, Hall hall) {
