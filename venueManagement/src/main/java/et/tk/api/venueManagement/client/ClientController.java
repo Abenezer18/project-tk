@@ -1,6 +1,7 @@
 package et.tk.api.venueManagement.client;
 
 import et.tk.api.venueManagement.hall.HallService;
+import et.tk.api.venueManagement.venue.Venue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/clients")
@@ -57,4 +59,14 @@ public class ClientController {
         else
             return new ResponseEntity<>("Deleted",HttpStatus.OK);
     }
+
+    @PutMapping("/client_admin/{id}")
+    public ResponseEntity<String> updateClientAdmin(@PathVariable String id, @RequestBody String venueAdminId) {
+        String status = clientService.updateClientAdmin(id, venueAdminId);
+
+        if (Objects.equals(status, "venue"))
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

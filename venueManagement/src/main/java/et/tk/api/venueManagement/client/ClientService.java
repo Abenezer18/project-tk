@@ -26,6 +26,7 @@ public class ClientService {
 
     public Client createClient(Client client) {
         client.setId(null);
+        client.setClientAdminId(null);
         client.setName(client.getName().toLowerCase());
         client.setAddress(client.getAddress().toLowerCase());
         client.setEmail(client.getEmail().toLowerCase());
@@ -54,6 +55,9 @@ public class ClientService {
         client.setId(id);
 
         Client backUp = clientOptional.get();
+        client.setId(backUp.getId());
+        client.setClientAdminId(backUp.getClientAdminId());
+
         clientRepository.deleteById(id);
 
         List<Client> nameCheck = clientRepository.findAll();
@@ -93,5 +97,20 @@ public class ClientService {
         clientRepository.deleteById(id);
 
         return "deleted";
+    }
+
+    // to be used only by system admin
+    public String updateClientAdmin(String id, String clientAdminId) {
+        Optional<Client> clientOptional = clientRepository.findById(id);
+        if (clientOptional.isEmpty())
+            return "client";
+
+        Client client = clientOptional.get();
+        client.setClientAdminId(clientAdminId);
+
+        clientRepository.deleteById(id);
+
+        clientRepository.save(client);
+        return "updated";
     }
 }

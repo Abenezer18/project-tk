@@ -28,6 +28,7 @@ public class VenueService {
 
     public String createVenue(String clientId, Venue venue) {
         venue.setId(null);
+        venue.setVenueAdminId(null);
         venue.setName(venue.getName().toLowerCase());
         venue.setAddress(venue.getAddress().toLowerCase());
         venue.setEmail(venue.getEmail().toLowerCase());
@@ -72,6 +73,7 @@ public class VenueService {
 
         Venue backUp = venueOptional.get();
         venue.setId(backUp.getId());
+        venue.setVenueAdminId(backUp.getVenueAdminId());
 
         venueRepository.deleteById(id);
 
@@ -104,14 +106,17 @@ public class VenueService {
         return "deleted";
     }
 
-    // to be used only by system admin
+    // to be used only by client admin
     public String updateVenueAdmin(String id, String venueAdminId) {
         Optional<Venue> venueOptional = venueRepository.findById(id);
         if (venueOptional.isEmpty())
             return "venue";
+
         Venue venue = venueOptional.get();
         venue.setVenueAdminId(venueAdminId);
+
         venueRepository.deleteById(id);
+
         venueRepository.save(venue);
         return "updated";
     }

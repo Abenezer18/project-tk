@@ -19,4 +19,5 @@ public class Client {
     private String address;
     private String email;
     private String phone_number;
+    private String clientAdminId;
 }

@@ -78,7 +78,7 @@ public class VenueController {
 
     }
 
-    @PutMapping("/admin/{id}")
+    @PutMapping("/venue_admin/{id}")
     public ResponseEntity<String> updateVenueAdmin(@PathVariable String id, @RequestBody String venueAdminId) {
         String status = venueService.updateVenueAdmin(id, venueAdminId);
 
