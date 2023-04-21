@@ -16,11 +16,11 @@ public class HallController {
     @Autowired
     private HallService hallService;
 
-    @PostMapping("/{venueId}/halls")
+    @PostMapping("/{venueId}")
     public ResponseEntity<String> createHall(@PathVariable String venueId, @RequestBody Hall hall) {
         String status = hallService.createHall(venueId, hall);
         if (Objects.equals(status, "name"))
-            return new ResponseEntity<>("name exists!", HttpStatus.FOUND);
+            return new ResponseEntity<>("Name exists! Change name", HttpStatus.FOUND);
         else if (Objects.equals(status, "venue"))
             return new ResponseEntity<>("venue dose not exist!", HttpStatus.NOT_FOUND);
         return new ResponseEntity<>("Hall created", HttpStatus.CREATED);

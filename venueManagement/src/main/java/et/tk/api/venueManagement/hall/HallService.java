@@ -29,6 +29,7 @@ public class HallService {
         hall.setVenueId(venueId);
         if (venueRepository.findById(venueId).isEmpty())
             return "venue";
+
         List<Hall> nameCheck = hallRepository.findAll();
         CollectionUtils.filter(nameCheck, o -> ((Hall) o).getVenueId().equals(venueId));
         CollectionUtils.filter(nameCheck, o -> ((Hall) o).getName().equals(hall.getName()));
@@ -80,17 +81,16 @@ public class HallService {
 
     public String deleteHall(String id) {
         Optional<Hall> hallOptional = hallRepository.findById(id);
+        if (hallOptional.isEmpty())
+            return "hall";
 
-        if (hallOptional.isPresent()) {
-            List<Seat> seats = seatRepository.findByHallId(id);
-            for (Seat seat:seats){
-                seatRepository.deleteById(seat.getId());
-            }
-            hallRepository.deleteById(id);
-            return "deleted";
-        } else {
-            return "not found";
+        List<Seat> seats = seatRepository.findByHallId(id);
+        for (Seat seat:seats) {
+            seatRepository.deleteById(seat.getId());
         }
+        hallRepository.deleteById(id);
+
+        return "deleted";
     }
 }
 

@@ -1,7 +1,9 @@
 package et.tk.api.venueManagement.venue;
 
+import et.tk.api.venueManagement.client.ClientRepository;
 import et.tk.api.venueManagement.hall.Hall;
 import et.tk.api.venueManagement.hall.HallRepository;
+import et.tk.api.venueManagement.seat.Seat;
 import et.tk.api.venueManagement.seat.SeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
@@ -21,18 +23,24 @@ public class VenueService {
     private HallRepository hallRepository;
     @Autowired
     private SeatRepository seatRepository;
+    @Autowired
+    private ClientRepository clientRepository;
 
-    public Venue createVenue(Venue venue) {
+    public String createVenue(String clientId, Venue venue) {
         venue.setId(null);
         venue.setName(venue.getName().toLowerCase());
         venue.setAddress(venue.getAddress().toLowerCase());
         venue.setEmail(venue.getEmail().toLowerCase());
+        venue.setClientId(clientId);
+        if (clientRepository.findById(clientId).isEmpty())
+            return "client";
 
         Optional<Venue> checkName = venueRepository.findByName(venue.getName()); // checking name
         if(checkName.isPresent()) // checking name
-            return null;
+            return "name";
 
-        return venueRepository.save(venue);
+        venueRepository.save(venue);
+        return "created";
     }
 
     public List<Venue> getVenues() {
@@ -80,19 +88,20 @@ public class VenueService {
 
     public String deleteVenue(String id) {
         Optional<Venue> venueOptional = venueRepository.findById(id);
-        if (venueOptional.isPresent()) {
-            venueRepository.deleteById(id);
-            List<Hall> halls = hallRepository.findByVenueId(id);
-            if (halls == null){
-                return "deleted";
-            }
-            List<String> hallIds = halls.stream().map(Hall::getId).collect(Collectors.toList());
-            hallRepository.deleteAllById(hallIds);
+        if (venueOptional.isEmpty())
+            return "venue";
 
-            return "deleted";
-        } else {
-            return "not found";
+        List<Hall> halls = hallRepository.findByVenueId(id);
+        for (Hall hall : halls) {
+            List<Seat> seats = seatRepository.findByHallId(hall.getId());
+            for (Seat seat:seats) {
+                seatRepository.deleteById(seat.getId());
+            }
+            hallRepository.deleteById(hall.getId());
         }
+        venueRepository.deleteById(id);
+
+        return "deleted";
     }
 
     // to be used only by system admin

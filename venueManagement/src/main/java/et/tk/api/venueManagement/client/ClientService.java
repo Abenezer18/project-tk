@@ -71,7 +71,7 @@ public class ClientService {
     public String deleteClient(String id) {
         Optional<Client> clientOptional = clientRepository.findById(id);
         if (clientOptional.isEmpty())
-            return "not found";
+            return "client";
 
         List<Venue> venues = venueRepository.findByClientId(id);
         if (venues.isEmpty()) {
@@ -90,7 +90,7 @@ public class ClientService {
             }
             venueRepository.deleteById(venue.getId());
         }
-        venueRepository.deleteById(id);
+        clientRepository.deleteById(id);
 
         return "deleted";
     }

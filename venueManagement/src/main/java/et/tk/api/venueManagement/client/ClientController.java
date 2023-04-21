@@ -52,7 +52,7 @@ public class ClientController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteClient(@PathVariable String id) {
         String status = clientService.deleteClient(id);
-        if (Objects.equals(status, "not found"))
+        if (Objects.equals(status, "client"))
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         else
             return new ResponseEntity<>("Deleted",HttpStatus.OK);

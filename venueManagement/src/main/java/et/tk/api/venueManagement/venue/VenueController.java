@@ -24,14 +24,14 @@ public class VenueController {
                     content = {@Content(mediaType = "application/json",
                         schema = @Schema (implementation = Venue.class))})
     @ApiResponse(responseCode = "302", description = "Name Already exists", content = @Content)
-    @PostMapping
-    public ResponseEntity<Venue> createVenue(@RequestBody Venue venue) {
-        Venue venue1 = venueService.createVenue(venue);
-
-        if (venue1 == null) // checking if name exists
-            return new ResponseEntity<>(HttpStatus.FOUND);
-
-        return new ResponseEntity<>(venue1, HttpStatus.CREATED);
+    @PostMapping("/{clientId}")
+    public ResponseEntity<String> createVenue(@PathVariable String clientId, @RequestBody Venue venue) {
+        String status = venueService.createVenue(clientId, venue);
+        if (Objects.equals(status, "name"))
+            return new ResponseEntity<>("Name exists! Change name", HttpStatus.FOUND);
+        else if (Objects.equals(status, "client"))
+            return new ResponseEntity<>("client dose not exist!", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Venue created", HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -71,7 +71,7 @@ public class VenueController {
     public ResponseEntity<String> deleteVenue(@PathVariable String id) {
         String status = venueService.deleteVenue(id);
 
-        if (Objects.equals(status, "not found"))
+        if (Objects.equals(status, "venue"))
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         else
             return new ResponseEntity<>("Deleted",HttpStatus.OK);
