@@ -80,24 +80,6 @@ public class VenueController {
 
     }
 
-    @PostMapping("/{venueId}/halls")
-    public ResponseEntity<String> createHall(@PathVariable String venueId, @RequestBody HallDto hallDto) {
-        String status = venueService.createHall(venueId, hallDto);
-        if (Objects.equals(status, "name"))
-            return new ResponseEntity<>("name exists!", HttpStatus.FOUND);
-        else if (Objects.equals(status, "venue"))
-            return new ResponseEntity<>("venue dose not exist!", HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>("Hall created", HttpStatus.CREATED);
-    }
-
-    @GetMapping("/{venueId}/halls")
-    public ResponseEntity<List<HallDto>> getHallsByVenueId(@PathVariable String venueId) {
-        List<HallDto> hallDtos = venueService.getHallsByVenueId(venueId);
-        if (hallDtos == null)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(hallDtos,HttpStatus.FOUND);
-    }
-
     @PutMapping("/admin/{id}")
     public ResponseEntity<String> updateVenueAdmin(@PathVariable String id, @RequestBody String venueAdminId) {
         String status = venueService.updateVenueAdmin(id, venueAdminId);

@@ -113,22 +113,6 @@ public class VenueService {
         return hallDetailedResponses;
     }
 
-    public String createHall(String venueId, HallDto hallDto) {
-        if (this.getVenueById(venueId) == null)
-            return "venue";
-        hallDto.setName(hallDto.getName().toLowerCase());
-        List<Hall> nameCheck = hallRepository.findAll();
-        CollectionUtils.filter(nameCheck, o -> ((Hall) o).getVenueId().equals(venueId));
-        CollectionUtils.filter(nameCheck, o -> ((Hall) o).getName().equals(hallDto.getName()));
-
-        if (nameCheck.isEmpty()) {
-            Hall hall = new Hall(hallDto, venueId);
-            Hall savedHall = hallRepository.save(hall);
-            return "created";
-        } else
-            return "name";
-    }
-
 
     // to be used only by system admin
     public String updateVenueAdmin(String id, String venueAdminId) {
