@@ -16,17 +16,4 @@ public class Hall {
     private String id;
     private String name;
     private String venueId;
-
-    // for POST
-    public Hall(String name, String venueId) {
-        this.name = name;
-        this.venueId = venueId;
-    }
-    public Hall(HallDto hallDto, String venueId){
-        this.name = hallDto.getName();
-        this.venueId = venueId;
-    }
-    public Hall(HallDto hallDto){
-        this.name = hallDto.getName();
-    }
 }

@@ -39,13 +39,13 @@ public class SeatController {
         return new ResponseEntity<>(seat, HttpStatus.FOUND);
     }
 
-    @PutMapping("/{hallId}/{id}")
-    public ResponseEntity<String> updateSeat(@PathVariable String id,@PathVariable String hallId, @RequestBody Seat seat) {
-        String status = seatService.updateSeat(id, hallId, seat);
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateSeat(@PathVariable String id, @RequestBody Seat seat) {
+        String status = seatService.updateSeat(id, seat);
         if (Objects.equals(status, "not exist"))
             return new ResponseEntity<>("Seat does not exist in hall", HttpStatus.NOT_FOUND);
         else if (Objects.equals(status, "hall"))
-            return new ResponseEntity<>("Hall does not exist.", HttpStatus.FOUND);
+            return new ResponseEntity<>("Hall ID does not match, if you want to change hall you must delete and create the seat again.", HttpStatus.FOUND);
         else if (Objects.equals(status, "name"))
             return new ResponseEntity<>("seat exists, change name.", HttpStatus.FOUND);
         return new ResponseEntity<>("Updated", HttpStatus.FOUND);

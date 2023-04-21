@@ -57,15 +57,16 @@ public class SeatService {
         return seatRepository.findById(id).orElse(null);
     }
 
-    public String updateSeat(String id, String hallId, Seat seat) {
+    public String updateSeat(String id, Seat seat) {
         seat.setRow(seat.getRow().toUpperCase());
-        seat.setHallId(hallId);
+
         Optional<Seat> seatOptional = seatRepository.findById(id);
         if (seatOptional.isEmpty())
             return "not exist";
-        Optional<Hall> hallOptional = hallRepository.findById(hallId);
-        if (hallOptional.isEmpty())
+
+        if (!Objects.equals(seat.getHallId(), seatOptional.get().getHallId()))
             return "hall";
+
         Seat backup = seatOptional.get();
         seat.setId(backup.getId());
         seat.setTicketIds(backup.getTicketIds());

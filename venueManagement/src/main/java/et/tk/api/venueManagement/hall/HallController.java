@@ -48,7 +48,7 @@ public class HallController {
         if (Objects.equals(status, "hall"))
             return new ResponseEntity<>("hall dose not exist", HttpStatus.NOT_FOUND);
         else if (Objects.equals(status, "venue id"))
-            return new ResponseEntity<>("Venue does not match, if you want to change venue you must delete and re-create the hall.", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Venue ID does not match, if you want to change venue you must delete and create the hall again.", HttpStatus.NOT_FOUND);
         else if (Objects.equals(status, "name"))
             return new ResponseEntity<>("hall name exists", HttpStatus.FOUND);
         else if (Objects.equals(status, "updated"))

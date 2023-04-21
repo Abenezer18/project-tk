@@ -1,16 +1,14 @@
 package et.tk.api.venueManagement.venue;
 
 import et.tk.api.venueManagement.hall.Hall;
-import et.tk.api.venueManagement.hall.HallDetailedResponse;
-import et.tk.api.venueManagement.hall.HallDto;
 import et.tk.api.venueManagement.hall.HallRepository;
-import et.tk.api.venueManagement.seat.Seat;
 import et.tk.api.venueManagement.seat.SeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -19,60 +17,62 @@ public class VenueService {
 
     @Autowired
     private VenueRepository venueRepository;
-
     @Autowired
     private HallRepository hallRepository;
-
     @Autowired
     private SeatRepository seatRepository;
 
-    public VenueInfoView createVenue(VenueDto venueDto) {
-        venueDto.setName(venueDto.getName().toLowerCase());
-        venueDto.setAddress(venueDto.getAddress().toLowerCase());
-        venueDto.setEmail(venueDto.getEmail().toLowerCase());
-        Optional<Venue> checkName = venueRepository.findByName(venueDto.getName()); // checking name
+    public Venue createVenue(Venue venue) {
+        venue.setId(null);
+        venue.setName(venue.getName().toLowerCase());
+        venue.setAddress(venue.getAddress().toLowerCase());
+        venue.setEmail(venue.getEmail().toLowerCase());
+
+        Optional<Venue> checkName = venueRepository.findByName(venue.getName()); // checking name
         if(checkName.isPresent()) // checking name
             return null;
-        Venue venue = new Venue(venueDto); // mapping to Venue class
-        Venue savedVenue = venueRepository.save(venue);
-        return new VenueInfoView(savedVenue);
+
+        return venueRepository.save(venue);
     }
 
-    public List<VenueInfoView> getVenues() {
-        return venueRepository.findAll().stream().map(VenueInfoView::new).toList();
+    public List<Venue> getVenues() {
+        return venueRepository.findAll();
     }
 
-    public VenueDetailedResponse getDetailedVenueResponse(String id){
-        Optional<Venue> venueOptional = venueRepository.findById(id);
-        if (venueOptional.isEmpty())
+    public Venue getVenueById(String id) {
+        return venueRepository.findById(id).orElse(null);
+    }
+
+    public List<Venue> getVenuesByClientId(String id) {
+
+        List<Venue> venues = venueRepository.findAll();
+        CollectionUtils.filter(venues, o -> ((Venue) o).getClientId().equals(id));
+
+        if (venues.isEmpty())
             return null;
-        VenueDetailedResponse venueDetailedResponse = new VenueDetailedResponse(venueOptional.get());
 
-
-        venueDetailedResponse.setHallDetailedResponse(this.getHallsDetailedResponse(id));
-
-        return venueDetailedResponse;
+        return venues;
     }
 
-    public VenueInfoView getVenueById(String id) {
+    public String updateVenue(String id, Venue venue) {
         Optional<Venue> venueOptional = venueRepository.findById(id);
-        if (venueOptional.isEmpty()) // check if optional is empty
-            return null;
-        return new VenueInfoView(venueOptional.get());
-    }
 
-    public String updateVenue(String id, VenueDto venueDto) {
-        Optional<Venue> venueOptional = venueRepository.findById(id);
-        System.out.println(venueOptional); // display old data
         if (venueOptional.isEmpty())
-            return "not found";
+            return "venue";
+
+        if (!Objects.equals(venue.getClientId(), venueOptional.get().getClientId()))
+            return "client id";
+
         Venue backUp = venueOptional.get();
+        venue.setId(backUp.getId());
+
         venueRepository.deleteById(id);
+
         List<Venue> nameCheck = venueRepository.findAll();
-        CollectionUtils.filter(nameCheck, o -> ((Venue) o).getName().equals(venueDto.getName()));
+        CollectionUtils.filter(nameCheck, o -> ((Venue) o).getName().equals(venue.getName()));
+
         if (nameCheck.isEmpty()) {
-            Venue venue = new Venue(id, venueDto);
-            Venue updatedVenue = venueRepository.save(venue);
+            venueRepository.save(venue);
             return "updated";
         }
         venueRepository.save(backUp);
@@ -83,36 +83,18 @@ public class VenueService {
         Optional<Venue> venueOptional = venueRepository.findById(id);
         if (venueOptional.isPresent()) {
             venueRepository.deleteById(id);
+            List<Hall> halls = hallRepository.findByVenueId(id);
+            if (halls == null){
+                return "deleted";
+            }
+            List<String> hallIds = halls.stream().map(Hall::getId).collect(Collectors.toList());
+            hallRepository.deleteAllById(hallIds);
+
             return "deleted";
         } else {
             return "not found";
         }
     }
-
-    public List<HallDto> getHallsByVenueId(String id) {
-        List<Hall> halls = hallRepository.findAll();
-        CollectionUtils.filter(halls, o -> ((Hall) o).getVenueId().equals(id));
-        if (halls.isEmpty())
-            return null;
-        return halls.stream().map(HallDto::new).collect(Collectors.toList());
-    }
-
-    public List<HallDetailedResponse> getHallsDetailedResponse(String id) {
-        List<Hall> halls = hallRepository.findAll();
-        CollectionUtils.filter(halls, o -> ((Hall) o).getVenueId().equals(id));
-        if (halls.isEmpty())
-            return null;
-        List<HallDetailedResponse> hallDetailedResponses = halls.stream().map(HallDetailedResponse::new).toList();
-
-        for (int i = 0; i < hallDetailedResponses.size(); i++) {
-            String hallId = hallDetailedResponses.get(i).getId();
-            List<Seat> seatsInHall = seatRepository.findByHallId(hallId);
-
-            hallDetailedResponses.get(i).setSeats(seatsInHall);
-        }
-        return hallDetailedResponses;
-    }
-
 
     // to be used only by system admin
     public String updateVenueAdmin(String id, String venueAdminId) {
