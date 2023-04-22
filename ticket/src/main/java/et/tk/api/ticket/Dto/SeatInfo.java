@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,5 +16,5 @@ public class SeatInfo {
     private String Row;
     private Integer number;
     private Integer Number;
-    private boolean seatStatus;
+    private List<String> scheduleIds;
 }

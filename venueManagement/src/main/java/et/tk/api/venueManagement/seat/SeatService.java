@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class SeatService {
@@ -26,7 +25,7 @@ public class SeatService {
     public String createSeat(String hallId, Seat seat) {
         seat.setRow(seat.getRow().toUpperCase());
         seat.setId(null);
-        seat.setTicketIds(null);
+        seat.setScheduleIds(null);
         Optional<Hall> hallOptional = hallRepository.findById(hallId);
         List<Seat> nameCheck = seatRepository.findByHallId(hallId);
         CollectionUtils.filter(nameCheck, o -> ((Seat) o).getRow().equals(seat.getRow()));
@@ -69,7 +68,7 @@ public class SeatService {
 
         Seat backup = seatOptional.get();
         seat.setId(backup.getId());
-        seat.setTicketIds(backup.getTicketIds());
+        seat.setScheduleIds(backup.getScheduleIds());
         seatRepository.deleteById(id);
 
         List<Seat> check = seatRepository.findByHallId(seat.getHallId());
@@ -92,7 +91,7 @@ public class SeatService {
         return "deleted";
     }
 
-    public String updateTicketIdList (String id, String ticketId) {
+    public String updateScheduleIdList (String id, String scheduleId) {
 
         Optional<Seat> seatOptional = seatRepository.findById(id);
         if (seatOptional.isEmpty())
@@ -100,22 +99,23 @@ public class SeatService {
 
         // check if the ticket exists
         try {
-            ResponseEntity<Ticket> ticket = restTemplate
-                    .getForEntity("http://localhost:8083/api/tickets/" + ticketId, Ticket.class);
-            if (ticket.getBody() == null)
-                return "ticket";
+            ResponseEntity<ScheduleDto> schedule = restTemplate
+                    .getForEntity("http://localhost:8082/api/schedules/" + scheduleId, ScheduleDto.class);
+            if (schedule.getBody() == null)
+                return "schedule";
         } catch (HttpClientErrorException e) {
-            return "ticket service";
+            return "schedule service";
         }
 
         Seat seat = seatOptional.get();
-        List<String> ticketIds = seat.getTicketIds();
-        for (String ticketId1 : ticketIds) {
-            if (Objects.equals(ticketId1, ticketId))
+        List<String> scheduleIds = seat.getScheduleIds();
+        for (String ticketId1 : scheduleIds) {
+            if (Objects.equals(ticketId1, scheduleId))
                 return "seat";
         }
-        ticketIds.add(ticketId);
-        seat.setTicketIds(ticketIds);
+
+        scheduleIds.add(scheduleId);
+        seat.setScheduleIds(scheduleIds);
         seatRepository.save(seat);
         return "updated";
     }

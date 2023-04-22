@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -53,35 +55,76 @@ public class TicketService {
         }
     }
 
-    public String createTicket(TicketPost ticketPost){
-        UserInfo userInfo = this.userInfo(ticketPost.getUserId()); // check if user exists
+    public ResponseEntity<String> createTicket(Ticket ticket) {
+        UserInfo userInfo = this.userInfo(ticket.getUserId()); // check if user exists
         if (userInfo == null)
-            return "user";
+            return new ResponseEntity<>("User not found!", HttpStatus.NOT_FOUND);
 
-        ScheduleInfo scheduleInfo = this.scheduleInfo(ticketPost.getScheduleId()); // check if schedule exists
+        ScheduleInfo scheduleInfo = this.scheduleInfo(ticket.getScheduleId()); // check if schedule exists
         if (scheduleInfo == null)
-            return "schedule";
+            return new ResponseEntity<>("Schedule not found!", HttpStatus.NOT_FOUND);
 
-        for (String seat : ticketPost.getSeatIds()) {
-            SeatInfo seatInfo = this.seatInfo(seat).getBody();
-            assert seatInfo != null;
-            if (seatInfo.isSeatStatus())
-                return ("seat : " + seatInfo.getRow() + seatInfo.getNumber() + " is unavailable");
-            else {          // setting the seat status true
-                seatInfo.setSeatStatus(true);
-                System.out.println("\n\n"+ seatInfo.isSeatStatus() +"\n\n");
-                restTemplate.put("http://localhost:8081/api/seats/" + seatInfo.getId(), seatInfo);
+
+        for (String seatId : ticket.getSeatIds()) {
+            SeatInfo seatInfo = this.seatInfo(seatId).getBody();
+            if (seatInfo == null)
+                return new ResponseEntity<>("Seat not found!", HttpStatus.NOT_FOUND);
+
+            for (String scheduleId : seatInfo.getScheduleIds()) {
+                if (Objects.equals(ticket.getScheduleId(), scheduleId))
+                    return new ResponseEntity<>("Seat taken : " + seatInfo.getRow() + seatInfo.getNumber(), HttpStatus.BAD_REQUEST);
             }
         }
-        Ticket ticket = new Ticket(ticketPost);
+
+        ticket.setId(null);
+        ticket.setDateOfPublish(LocalDateTime.now().toString());
+        ticket.setTicketStatus(true);
+
         ticketRepository.save(ticket);
-        userInfo.setTicketId(ticket.getId());
-        System.out.println(userInfo.getId());
-        System.out.println(ticket.getId());
-        restTemplate.put("http://localhost:8084/api/users/ticket/" + userInfo.getId() , ticket.getId());
-        System.out.println(ticket.getId());
-        return "created";
+
+        for (String seatId : ticket.getSeatIds()) {
+            try {
+                restTemplate.put("http://localhost:8081/api/seats/" + ticket.getScheduleId() + "/" + seatId , ticket.getId());
+            } catch (HttpClientErrorException e) {
+                return new ResponseEntity<>("Venue service error", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+        return new ResponseEntity<>("Ticket created!", HttpStatus.CREATED);
     }
+
+    // public String createTicket(TicketPost ticketPost){
+    //        UserInfo userInfo = this.userInfo(ticketPost.getUserId()); // check if user exists
+    //        if (userInfo == null)
+    //            return "user";
+    //
+    //        ScheduleInfo scheduleInfo = this.scheduleInfo(ticketPost.getScheduleId()); // check if schedule exists
+    //        if (scheduleInfo == null)
+    //            return "schedule";
+    //
+    //
+    //        for (String seat : ticketPost.getSeatIds()) {
+    //            SeatInfo seatInfo = this.seatInfo(seat).getBody();
+    //            assert seatInfo != null;
+    //
+    //            for (String scheduleId : seatInfo.ge()) {
+    //                if (ticketId == )
+    //            }
+    //            if (seatInfo.isSeatStatus())
+    //                return ("seat : " + seatInfo.getRow() + seatInfo.getNumber() + " is unavailable");
+    //            else {          // setting the seat status true
+    //                seatInfo.setSeatStatus(true);
+    //                restTemplate.put("http://localhost:8081/api/seats/" + seatInfo.getId(), seatInfo);
+    //            }
+    //        }
+    //        Ticket ticket = new Ticket(ticketPost);
+    //        ticketRepository.save(ticket);
+    //        userInfo.setTicketId(ticket.getId());
+    //        System.out.println(userInfo.getId());
+    //        System.out.println(ticket.getId());
+    //        restTemplate.put("http://localhost:8084/api/users/ticket/" + userInfo.getId() , ticket.getId());
+    //        System.out.println(ticket.getId());
+    //        return "created";
+    //    }
 
     public List<Ticket> getAllTickets(){
 

@@ -70,7 +70,7 @@ public class ScheduleService {
         }
     }
 
-    public String createSchedule(String movieId, String hallId, Schedule schedule){
+    public String createSchedule(String movieId, String hallId, Schedule schedule) {
         HallInfo hallInfo = this.hallInfo(hallId); // checking if hall exists
         if (hallInfo == null)
             return "hall";
@@ -115,7 +115,7 @@ public class ScheduleService {
         return scheduleOptional.stream().toList();
     }
 
-    public Schedule getScheduleById(String id){
+    public Schedule getScheduleById(String id) {
         return scheduleRepository.findById(id).orElse(null);
     }
 

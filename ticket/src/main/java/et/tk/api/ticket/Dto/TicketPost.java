@@ -14,6 +14,5 @@ import java.util.List;
 public class TicketPost {
     private String userId;
     private String scheduleId;
-    private List<String> seatIds;
     private String ticketPrice;
 }

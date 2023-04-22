@@ -4,17 +4,13 @@ import et.tk.api.venueManagement.hall.Hall;
 import et.tk.api.venueManagement.hall.HallRepository;
 import et.tk.api.venueManagement.seat.Seat;
 import et.tk.api.venueManagement.seat.SeatRepository;
-import et.tk.api.venueManagement.seat.Ticket;
 import et.tk.api.venueManagement.venue.Venue;
 import et.tk.api.venueManagement.venue.VenueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.CollectionUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service

@@ -29,7 +29,6 @@ public class Ticket {
     public Ticket (TicketPost ticketPost){
         this.userId = ticketPost.getUserId();
         this.scheduleId = ticketPost.getScheduleId();
-        this.seatIds = ticketPost.getSeatIds();
         this.ticketPrice = ticketPost.getTicketPrice();
         this.dateOfPublish = LocalDateTime.now().toString();
         this.ticketStatus = true;

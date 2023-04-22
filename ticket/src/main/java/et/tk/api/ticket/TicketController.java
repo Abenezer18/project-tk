@@ -17,17 +17,8 @@ public class TicketController {
     private TicketService ticketService;
 
     @PostMapping
-    public ResponseEntity<String> createTicket(@RequestBody TicketPost ticketPost){
-        String status = ticketService.createTicket(ticketPost);
-
-        if (Objects.equals(status, "user"))
-            return new ResponseEntity<>("User not found!", HttpStatus.NOT_FOUND);
-        else if (Objects.equals(status, "schedule"))
-            return new ResponseEntity<>("Schedule not found!", HttpStatus.NOT_FOUND);
-        else if (Objects.equals(status, "created"))
-            return new ResponseEntity<>("Ticket created!", HttpStatus.CREATED);
-        else
-            return new ResponseEntity<>(status, HttpStatus.CONFLICT);
+    public ResponseEntity<String> createTicket(@RequestBody Ticket ticket){
+        return ticketService.createTicket(ticket);
     }
 
     @GetMapping

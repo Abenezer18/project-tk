@@ -60,15 +60,15 @@ public class SeatController {
     }
 
     // for ticket service
-    @PutMapping("/{ticketId}/{id}")
-    public ResponseEntity<String> updateTicketIdList(@PathVariable String id, @PathVariable String ticketId) {
-        String status = seatService.updateTicketIdList(id, ticketId);
+    @PutMapping("/{scheduleId}/{id}")
+    public ResponseEntity<String> updateScheduleIdList(@PathVariable String id, @PathVariable String scheduleId) {
+        String status = seatService.updateScheduleIdList(id, scheduleId);
         if (Objects.equals(status, "not found"))
             return new ResponseEntity<>("Seat does not exist in hall", HttpStatus.NOT_FOUND);
-        else if (Objects.equals(status, "ticket"))
-            return new ResponseEntity<>("Ticket does not exist.", HttpStatus.NOT_FOUND);
-        else if (Objects.equals(status, "ticket service"))
-            return new ResponseEntity<>("Ticket service error", HttpStatus.NOT_FOUND);
+        else if (Objects.equals(status, "schedule"))
+            return new ResponseEntity<>("Schedule does not exist.", HttpStatus.NOT_FOUND);
+        else if (Objects.equals(status, "schedule service"))
+            return new ResponseEntity<>("Schedule service error", HttpStatus.NOT_FOUND);
         else if (Objects.equals(status, "seat"))
             return new ResponseEntity<>("seat occupied", HttpStatus.FOUND);
         else if (Objects.equals(status, "updated"))
