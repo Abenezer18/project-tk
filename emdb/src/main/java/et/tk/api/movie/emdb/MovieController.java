@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/emdb")
 public class MovieController {
 
     @Autowired
@@ -22,7 +23,7 @@ public class MovieController {
 //    }
 
     //POST new movie
-    @PostMapping("/movies")
+    @PostMapping
     public ResponseEntity<String> addMovie(@RequestBody Movie movie){
         if (movieService.addMovie(movie).equals("name"))
             return new ResponseEntity<>("Title already exists", HttpStatus.BAD_REQUEST);
@@ -31,12 +32,12 @@ public class MovieController {
     }
 
     //GET all movies
-    @GetMapping("/movies")
+    @GetMapping
     public ResponseEntity<List<MovieMinimalistView>> getAllMovies() {
         return new ResponseEntity<>(movieService.getAllMovies(), HttpStatus.OK) ;
     }
 
-    @GetMapping("/movies/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Movie> getMovieById(@PathVariable String id) {
         Movie result = movieService.getMovieById(id);
         if (result == null)
@@ -45,7 +46,7 @@ public class MovieController {
     }
 
     //GET movie by title using search repository
-    @GetMapping("/movies/search/{title}")
+    @GetMapping("/search/{title}")
     public ResponseEntity<List<MovieMinimalistView>> search(@PathVariable String title){
 
         List<MovieMinimalistView> searchResult = movieService.search(title);
@@ -56,7 +57,7 @@ public class MovieController {
     }
 
     //UPDATE movie by id
-    @PutMapping("/movies/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateMovie(@RequestBody Movie movie, @PathVariable String id){
         String status = movieService.updateMovie(id, movie);
 
@@ -68,7 +69,7 @@ public class MovieController {
             return new ResponseEntity<>("Updated successfully!", HttpStatus.OK);
     }
 
-    @DeleteMapping("/movies/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMovie(@PathVariable String id){
         String status = movieService.deleteMovie(id);
         if (status.equals("not found"))

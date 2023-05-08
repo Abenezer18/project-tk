@@ -15,5 +15,6 @@ public class Hall {
     @Id
     private String id;
     private String name;
+    private int price;
     private String venueId;
 }

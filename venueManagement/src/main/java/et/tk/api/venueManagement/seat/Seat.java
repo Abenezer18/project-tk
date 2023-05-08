@@ -19,5 +19,6 @@ public class Seat {
     private String row;
     private int number;
     private String hallId;
+    private int price;
     private List<String> scheduleIds;
 }

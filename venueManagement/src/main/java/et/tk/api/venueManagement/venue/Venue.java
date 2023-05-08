@@ -19,6 +19,7 @@ public class Venue {
     private String name;
     private String address;
     private String email;
+    private int price;
     private String clientId;
     private String venueAdminId;
 }

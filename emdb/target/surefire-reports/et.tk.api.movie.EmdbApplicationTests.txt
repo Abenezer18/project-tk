@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: et.tk.api.movie.EmdbApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.081 s - in et.tk.api.movie.EmdbApplicationTests
