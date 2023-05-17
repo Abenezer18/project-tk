@@ -21,5 +21,5 @@ public class Venue {
     private String email;
     private int price;
     private String clientId;
-    private String venueAdminId;
+//    private String venueAdminId;
 }

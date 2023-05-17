@@ -78,12 +78,12 @@ public class VenueController {
 
     }
 
-    @PutMapping("/venue_admin/{id}")
-    public ResponseEntity<String> updateVenueAdmin(@PathVariable String id, @RequestBody String venueAdminId) {
-        String status = venueService.updateVenueAdmin(id, venueAdminId);
-
-        if (Objects.equals(status, "venue"))
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @PutMapping("/venue_admin/{id}")
+//    public ResponseEntity<String> updateVenueAdmin(@PathVariable String id, @RequestBody String venueAdminId) {
+//        String status = venueService.updateVenueAdmin(id, venueAdminId);
+//
+//        if (Objects.equals(status, "venue"))
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 }

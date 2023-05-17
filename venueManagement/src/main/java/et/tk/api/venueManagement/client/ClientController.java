@@ -60,13 +60,13 @@ public class ClientController {
             return new ResponseEntity<>("Deleted",HttpStatus.OK);
     }
 
-    @PutMapping("/client_admin/{id}")
-    public ResponseEntity<String> updateClientAdmin(@PathVariable String id, @RequestBody String venueAdminId) {
-        String status = clientService.updateClientAdmin(id, venueAdminId);
-
-        if (Objects.equals(status, "venue"))
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @PutMapping("/client_admin/{id}")
+//    public ResponseEntity<String> updateClientAdmin(@PathVariable String id, @RequestBody String venueAdminId) {
+//        String status = clientService.updateClientAdmin(id, venueAdminId);
+//
+//        if (Objects.equals(status, "venue"))
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
 }

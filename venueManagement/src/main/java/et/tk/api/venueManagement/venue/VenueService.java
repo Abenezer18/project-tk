@@ -28,7 +28,7 @@ public class VenueService {
 
     public String createVenue(String clientId, Venue venue) {
         venue.setId(null);
-        venue.setVenueAdminId(null);
+//        venue.setVenueAdminId(null);
         venue.setName(venue.getName().toLowerCase());
         venue.setAddress(venue.getAddress().toLowerCase());
         venue.setEmail(venue.getEmail().toLowerCase());
@@ -73,11 +73,11 @@ public class VenueService {
 
         Venue backUp = venueOptional.get();
         venue.setId(backUp.getId());
-        venue.setVenueAdminId(backUp.getVenueAdminId());
+//        venue.setVenueAdminId(backUp.getVenueAdminId());
 
         venueRepository.deleteById(id);
 
-        List<Venue> nameCheck = venueRepository.findAll();
+        List<Venue> nameCheck = venueRepository.findByClientId(backUp.getClientId());
         CollectionUtils.filter(nameCheck, o -> ((Venue) o).getName().equals(venue.getName()));
 
         if (nameCheck.isEmpty()) {
@@ -107,17 +107,17 @@ public class VenueService {
     }
 
     // to be used only by client admin
-    public String updateVenueAdmin(String id, String venueAdminId) {
-        Optional<Venue> venueOptional = venueRepository.findById(id);
-        if (venueOptional.isEmpty())
-            return "venue";
-
-        Venue venue = venueOptional.get();
-        venue.setVenueAdminId(venueAdminId);
-
-        venueRepository.deleteById(id);
-
-        venueRepository.save(venue);
-        return "updated";
-    }
+//    public String updateVenueAdmin(String id, String venueAdminId) {
+//        Optional<Venue> venueOptional = venueRepository.findById(id);
+//        if (venueOptional.isEmpty())
+//            return "venue";
+//
+//        Venue venue = venueOptional.get();
+//        venue.setVenueAdminId(venueAdminId);
+//
+//        venueRepository.deleteById(id);
+//
+//        venueRepository.save(venue);
+//        return "updated";
+//    }
 }

@@ -1,4 +1,4 @@
-package et.tk.api.venueManagement.client;
+package et.tk.api.userManagement.clientAdmin;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,13 +11,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "clients")
-public class Client {
+@Document(collection = "client_admin")
+public class ClientAdmin {
     @Id
     private String id;
     private String name;
-    private String address;
-    private String email;
-    private String phone_number;
-//    private String clientAdminId;
+    private String clientId;
 }

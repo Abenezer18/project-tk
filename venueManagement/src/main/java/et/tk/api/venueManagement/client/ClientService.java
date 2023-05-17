@@ -26,7 +26,7 @@ public class ClientService {
 
     public Client createClient(Client client) {
         client.setId(null);
-        client.setClientAdminId(null);
+//        client.setClientAdminId(null);
         client.setName(client.getName().toLowerCase());
         client.setAddress(client.getAddress().toLowerCase());
         client.setEmail(client.getEmail().toLowerCase());
@@ -56,7 +56,7 @@ public class ClientService {
 
         Client backUp = clientOptional.get();
         client.setId(backUp.getId());
-        client.setClientAdminId(backUp.getClientAdminId());
+//        client.setClientAdminId(backUp.getClientAdminId());
 
         clientRepository.deleteById(id);
 
@@ -100,27 +100,27 @@ public class ClientService {
     }
 
     // to be used only by system admin
-    public String updateClientAdmin(String id, String clientAdminId) {
-        Optional<Client> clientOptional = clientRepository.findById(id);
-        if (clientOptional.isEmpty())
-            return "client";
-
-//        // check if the client admin exists
-//        try {
-//            ResponseEntity<Ticket> ticket = restTemplate
-//                    .getForEntity("http://localhost:8083/api/users/" + clientAdminId, Ticket.class);
-//            if (ticket.getBody() == null)
-//                return "ticket";
-//        } catch (HttpClientErrorException e) {
-//            return "ticket service";
-//        }
-
-        Client client = clientOptional.get();
-        client.setClientAdminId(clientAdminId);
-
-        clientRepository.deleteById(id);
-
-        clientRepository.save(client);
-        return "updated";
-    }
+//    public String updateClientAdmin(String id, String clientAdminId) {
+//        Optional<Client> clientOptional = clientRepository.findById(id);
+//        if (clientOptional.isEmpty())
+//            return "client";
+//
+////        // check if the client admin exists
+////        try {
+////            ResponseEntity<Ticket> ticket = restTemplate
+////                    .getForEntity("http://localhost:8083/api/users/" + clientAdminId, Ticket.class);
+////            if (ticket.getBody() == null)
+////                return "ticket";
+////        } catch (HttpClientErrorException e) {
+////            return "ticket service";
+////        }
+//
+//        Client client = clientOptional.get();
+//        client.setClientAdminId(clientAdminId);
+//
+//        clientRepository.deleteById(id);
+//
+//        clientRepository.save(client);
+//        return "updated";
+//    }
 }
