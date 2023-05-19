@@ -17,10 +17,12 @@ public class MovieMinimalistView {
     private String id;
     private String title;
     private String year;
+    private String poster;
 
     public MovieMinimalistView (Movie movie){
         this.id = movie.getId();
         this.title = movie.getTitle();
         this.year = movie.getYear();
+        this.poster = movie.getPoster();
     }
 }

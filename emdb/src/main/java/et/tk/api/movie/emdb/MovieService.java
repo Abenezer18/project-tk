@@ -22,11 +22,10 @@ public class MovieService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public MovieService() {
-    }
+    public MovieService() {}
 
     //POST new movie to DB
-    public String addMovie(Movie movie){
+    public String addMovie(Movie movie) {
         Optional<Movie> optionalMovie = movieRepository.findByTitle(movie.getTitle());
         if (optionalMovie.isEmpty()) {
             movie.setId(null);
@@ -39,18 +38,18 @@ public class MovieService {
     }
 
     // GET all movies form DB
-    public List<MovieMinimalistView> getAllMovies(){
+    public List<MovieMinimalistView> getAllMovies() {
         return movieRepository.findAll().stream().map(MovieMinimalistView::new).toList();
     }
 
     // GET  movie by id form DB
-    public Movie getMovieById(String id){
+    public Movie getMovieById(String id) {
         Optional<Movie> movie = movieRepository.findById(id);
         return movie.orElse(null);
     }
 
     // search by partial title
-    public List<MovieMinimalistView> search(String partialString){
+    public List<MovieMinimalistView> search(String partialString) {
         Query query = new Query();
         query.addCriteria(Criteria.where("title").regex(".*" + partialString + ".*"));
         List<Movie> result = mongoTemplate.find(query, Movie.class);
@@ -58,7 +57,7 @@ public class MovieService {
     }
 
     //UPDATE movie using id
-    public String updateMovie(String id, Movie movie){
+    public String updateMovie(String id, Movie movie) {
         Optional<Movie> optionalMovie = movieRepository.findById(id);
         if (optionalMovie.isEmpty())
             return "not found";

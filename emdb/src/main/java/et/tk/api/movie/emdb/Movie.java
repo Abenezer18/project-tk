@@ -24,6 +24,7 @@ public class Movie {
     private String id;
     private String title;
     private String year;
+    private String poster;
     private String rated; //PG 13
     //correct to time
     private String released;
@@ -34,10 +35,4 @@ public class Movie {
     private List<String> actors;
     private String plot;
     private String language;
-
-    public Movie (MovieMinimalistView movieMinimalistView){
-        this.id = movieMinimalistView.getId();
-        this.title = movieMinimalistView.getTitle();
-        this.year = movieMinimalistView.getYear();
-    }
 }
