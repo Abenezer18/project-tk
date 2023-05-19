@@ -2,7 +2,7 @@ package et.tk.api.movie.emdb;
 
 import java.util.List;
 
-import et.tk.api.movie.emdb.dto.MovieMinimalistView;
+// import et.tk.api.movie.emdb.dto.MovieMinimalistView;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

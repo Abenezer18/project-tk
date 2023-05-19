@@ -1,8 +1,9 @@
 package et.tk.api.userManagement.clientAdmin;
 
-import et.tk.api.userManagement.venueAdmin.VenueAdmin;
-import et.tk.api.userManagement.venueAdmin.VenueAdminRepository;
-import et.tk.api.userManagement.venueAdmin.VenueInfo;
+// import et.tk.api.userManagement.venueAdmin.VenueAdmin;
+// import et.tk.api.userManagement.venueAdmin.VenueAdminRepository;
+// import et.tk.api.userManagement.venueAdmin.VenueInfo;
+import et.tk.api.userManagement.clientAdmin.ClientInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

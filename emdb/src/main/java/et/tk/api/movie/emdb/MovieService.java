@@ -3,7 +3,6 @@ package et.tk.api.movie.emdb;
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import et.tk.api.movie.emdb.dto.MovieMinimalistView;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -16,8 +15,6 @@ public class MovieService {
 
     @Autowired
     private MovieRepository movieRepository;
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private MongoTemplate mongoTemplate;

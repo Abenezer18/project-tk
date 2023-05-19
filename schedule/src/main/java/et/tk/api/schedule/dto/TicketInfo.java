@@ -1,9 +1,12 @@
 package et.tk.api.schedule.dto;
 
-import org.springframework.data.annotation.Id;
-
 import java.util.List;
+import lombok.*;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class TicketInfo {
     private String id;
     private String userId;
