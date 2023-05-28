@@ -1,6 +1,5 @@
 package et.tk.api.ticket;
 
-import et.tk.api.ticket.Dto.TicketPost;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,13 +23,5 @@ public class Ticket {
     private double ticketPrice;
     private boolean ticketStatus;
     private String dateOfPublish;
-
-    // POST
-    public Ticket (TicketPost ticketPost){
-        this.userId = ticketPost.getUserId();
-        this.scheduleId = ticketPost.getScheduleId();
-        this.ticketPrice = ticketPost.getTicketPrice();
-        this.dateOfPublish = LocalDateTime.now().toString();
-        this.ticketStatus = true;
-    }
+    private String paymentToken;
 }

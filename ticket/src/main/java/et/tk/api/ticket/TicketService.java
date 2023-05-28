@@ -6,8 +6,7 @@ import et.tk.api.ticket.Dto.SeatInfo;
 import et.tk.api.ticket.Dto.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.aggregation.DateOperators.DayOfWeek;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -55,6 +54,29 @@ public class TicketService {
         }
     }
 
+    private boolean makePayment(String token, double amount) {
+        String paymentUrl = "http://localhost:8090/api/payment/charge";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("token", token);
+        headers.set("amount", String.valueOf(amount));
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> response;
+
+        try {
+            response = restTemplate.exchange(paymentUrl, HttpMethod.POST, entity, String.class);
+        } catch (Exception e) {
+            return false;
+        }
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public ResponseEntity<String> createTicket(Ticket ticket) {
 
         double totalPrice = 0.0;  // holds the total price of the seats
@@ -93,15 +115,20 @@ public class TicketService {
         String getToday = dayOfWeek.toString();
 
         // Check if the day of the week is a weekend day (Saturday or Sunday)
-        if (getToday == "SATURDAY" ||   getToday == "SUNDAY") {
+        if (Objects.equals(getToday, "SATURDAY") || Objects.equals(getToday, "SUNDAY")) {
             totalPrice = totalPrice * 1.15; // add 15% to the total price
         }
-        else if (getToday == "FRIDAY") {
+        else if (Objects.equals(getToday, "FRIDAY")) {
             totalPrice = totalPrice * 1.1; // add 10% to the total price
         }
 
         ticket.setTicketPrice(totalPrice); // Set the ticket price to the total calculated price
 
+        // make payment
+        boolean paymentSuccessful = makePayment(ticket.getPaymentToken(), totalPrice);
+        if (!paymentSuccessful) {
+            return new ResponseEntity<>("Payment failed", HttpStatus.PAYMENT_REQUIRED);
+        }
 
         ticketRepository.save(ticket);
 
