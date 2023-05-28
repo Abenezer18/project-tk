@@ -46,7 +46,7 @@ public class VenueController {
         if (venue == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        return new ResponseEntity<>(venue,HttpStatus.FOUND);
+        return new ResponseEntity<>(venue,HttpStatus.OK);
     }
 
     @GetMapping("/client/{clientId}")

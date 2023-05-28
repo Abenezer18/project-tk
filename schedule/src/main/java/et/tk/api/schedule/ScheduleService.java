@@ -26,33 +26,36 @@ public class ScheduleService {
 
         try {
             venueInfoResponseEntity = restTemplate
-                    .getForEntity("http://localhost:8081/api/venues/" + venueId, VenueInfo.class);
+                    .getForEntity("http://localhost:8085/api/venues/" + venueId, VenueInfo.class);
         } catch (HttpStatusCodeException e) {
             return null;
         }
         return venueInfoResponseEntity.getBody();
     }
+
     public HallInfo hallInfo (String hallId){
         ResponseEntity<HallInfo> hallInfoResponseEntity;
 
         try {
             hallInfoResponseEntity = restTemplate
-                    .getForEntity("http://localhost:8081/api/halls/" + hallId, HallInfo.class);
+                    .getForEntity("http://localhost:8085/api/halls/" + hallId, HallInfo.class);
         } catch (HttpStatusCodeException e) {
             return null;
         }
         return hallInfoResponseEntity.getBody();
     }
+
     public MovieInfo movieInfo (String movieId){
         ResponseEntity<MovieInfo> movieInfoResponseEntity;
         try {
             movieInfoResponseEntity = restTemplate
-                    .getForEntity("http://localhost:8080/movies/" + movieId, MovieInfo.class);
+                    .getForEntity("http://localhost:8081/movies/" + movieId, MovieInfo.class);
         } catch (HttpStatusCodeException e) {
             return null;
         }
         return movieInfoResponseEntity.getBody();
     }
+
     public String ticketInfo (String scheduleId){
         ResponseEntity<TicketInfo> ticketInfoResponseEntity;
         try {
@@ -67,6 +70,7 @@ public class ScheduleService {
             return "not found";
         }
     }
+
 
     public String createSchedule(String movieId, String hallId, Schedule schedule) {
         HallInfo hallInfo = this.hallInfo(hallId); // checking if hall exists

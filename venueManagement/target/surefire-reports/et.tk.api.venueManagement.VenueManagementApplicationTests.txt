@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: et.tk.api.venueManagement.VenueManagementApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 13.324 s - in et.tk.api.venueManagement.VenueManagementApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 18.456 s - in et.tk.api.venueManagement.VenueManagementApplicationTests

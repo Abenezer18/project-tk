@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class SeatService {
@@ -31,9 +29,36 @@ public class SeatService {
         CollectionUtils.filter(nameCheck, o -> ((Seat) o).getRow().equals(seat.getRow()));
         CollectionUtils.filter(nameCheck, o -> ((Seat) o).getNumber() == seat.getNumber());
 
+
+        OptionalDouble seatPriceOptional = OptionalDouble.of(seat.getPrice()); // checks if seat price is null
+
+        // check if the seat price is empty, if it is set the hall price (base price)
+        if (seatPriceOptional.getAsDouble() <= 0) {
+            
+            // check if the hall is present
+            if (hallOptional.isPresent()){
+
+                Double hallPrice = hallOptional.get().getPrice(); // gets the price of the hall
+                
+                // check if the hall price is empty. if it is not, then set the seat price equal to the hall price
+                if (hallPrice <= 0){
+                    return "hall price";
+                } else {
+                    seat.setPrice(hallPrice);
+                }
+            } else {
+                return "hall";
+            }
+        }
+    
         if (nameCheck.isEmpty()){
             if (hallOptional.isPresent()) {
                 seat.setHallId(hallId);
+
+                // making schedule id list not null by adding 1 data
+                List<String> bla = new ArrayList<String>();
+                bla.add("scheduleIds");
+                seat.setScheduleIds(bla);
                 seatRepository.save(seat);
                 return "created";
             } else {

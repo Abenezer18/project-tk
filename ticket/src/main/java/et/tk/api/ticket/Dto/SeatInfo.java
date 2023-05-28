@@ -15,5 +15,6 @@ public class SeatInfo {
     private String id;
     private String Row;
     private Integer number;
+    private double price;
     private List<String> scheduleIds;
 }

@@ -1,32 +1,70 @@
 version: '3'
+
 services:
+
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "80:80"
+    
+      
+
   emdb:
+    container_name: emdb
     build:
       context: ./emdb
       dockerfile: Dockerfile.emdb
+    expose:
+      - "8081"
     ports:
       - "8081:8081"
+      
+
   schedule:
+    container_name: schedule
     build:
       context: ./schedule
       dockerfile: Dockerfile.schedule
+    expose:
+      - "8082"
     ports:
       - "8082:8082"
+    
+      
+
   ticket:
+    container_name: ticket
     build:
       context: ./ticket
       dockerfile: Dockerfile.ticket
+    expose:
+      - "8083"
     ports:
       - "8083:8083"
+      
+
   user:
+    container_name: user
     build:
       context: ./userManagement
       dockerfile: Dockerfile.user
+    expose:
+      - "8084"
     ports:
       - "8084:8084"
+    
+      
+
   venue:
+    container_name: venue
     build:
       context: ./venueManagement
       dockerfile: Dockerfile.venue
+    expose:
+      - "8085"
     ports:
       - "8085:8085"
+    

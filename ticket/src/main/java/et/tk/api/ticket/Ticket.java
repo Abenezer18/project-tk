@@ -21,7 +21,7 @@ public class Ticket {
     private String userId;
     private String scheduleId;
     private List<String> seatIds;
-    private String ticketPrice;
+    private double ticketPrice;
     private boolean ticketStatus;
     private String dateOfPublish;
 

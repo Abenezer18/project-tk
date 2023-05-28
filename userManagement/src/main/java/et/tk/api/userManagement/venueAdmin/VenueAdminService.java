@@ -25,14 +25,14 @@ public class VenueAdminService {
         venueAdmin.setId(null);
         try {
             venueInfoResponseEntity = restTemplate
-                    .getForEntity("http://localhost:8081/api/venues/"+ venueAdmin.getVenueId() , VenueInfo.class);
+                    .getForEntity("http://localhost:8085/api/venues/"+ venueAdmin.getVenueId() , VenueInfo.class);
         } catch (HttpClientErrorException e){
             return "venue";
         }
         if(venueInfoResponseEntity.getBody() == null)
             return "venueNotFound";
         try {
-            restTemplate.put("http://localhost:8081/api/venues/admin/" + venueAdmin.getVenueId(), venueAdmin.getId());
+            restTemplate.put("http://localhost:8085/api/venues/admin/" + venueAdmin.getVenueId(), venueAdmin.getId());
         } catch (HttpClientErrorException e){
             return "venue";
         }

@@ -5,12 +5,15 @@ import et.tk.api.ticket.Dto.SeatInfo;
 // import et.tk.api.ticket.Dto.TicketPost;
 import et.tk.api.ticket.Dto.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.aggregation.DateOperators.DayOfWeek;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -45,7 +48,7 @@ public class TicketService {
         ResponseEntity<SeatInfo> seatInfoResponseEntity;
         try {
             seatInfoResponseEntity =  restTemplate
-                    .getForEntity("http://localhost:8081/api/seats/" + seatId, SeatInfo.class);
+                    .getForEntity("http://localhost:8085/api/seats/" + seatId, SeatInfo.class);
             return new ResponseEntity<>(seatInfoResponseEntity.getBody(), HttpStatus.OK);
         } catch (HttpClientErrorException e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -53,6 +56,9 @@ public class TicketService {
     }
 
     public ResponseEntity<String> createTicket(Ticket ticket) {
+
+        double totalPrice = 0.0;  // holds the total price of the seats
+
         UserInfo userInfo = this.userInfo(ticket.getUserId()); // check if user exists
         if (userInfo == null)
             return new ResponseEntity<>("User not found!", HttpStatus.NOT_FOUND);
@@ -63,6 +69,7 @@ public class TicketService {
 
 
         for (String seatId : ticket.getSeatIds()) {
+
             SeatInfo seatInfo = this.seatInfo(seatId).getBody();
             if (seatInfo == null)
                 return new ResponseEntity<>("Seat not found!", HttpStatus.NOT_FOUND);
@@ -71,23 +78,44 @@ public class TicketService {
                 if (Objects.equals(ticket.getScheduleId(), scheduleId))
                     return new ResponseEntity<>("Seat taken : " + seatInfo.getRow() + seatInfo.getNumber(), HttpStatus.BAD_REQUEST);
             }
+            
+        totalPrice += seatInfo.getPrice(); // Add the price of each seat to the total ticket price
         }
 
         ticket.setId(null);
         ticket.setDateOfPublish(LocalDateTime.now().toString());
         ticket.setTicketStatus(true);
 
+        // change this to check the date of the schedule
+        LocalDate today = LocalDate.now();
+        java.time.DayOfWeek dayOfWeek = today.getDayOfWeek();
+
+        String getToday = dayOfWeek.toString();
+
+        // Check if the day of the week is a weekend day (Saturday or Sunday)
+        if (getToday == "SATURDAY" ||   getToday == "SUNDAY") {
+            totalPrice = totalPrice * 1.15; // add 15% to the total price
+        }
+        else if (getToday == "FRIDAY") {
+            totalPrice = totalPrice * 1.1; // add 10% to the total price
+        }
+
+        ticket.setTicketPrice(totalPrice); // Set the ticket price to the total calculated price
+
+
         ticketRepository.save(ticket);
 
         for (String seatId : ticket.getSeatIds()) {
             try {
-                restTemplate.put("http://localhost:8081/api/seats/" + ticket.getScheduleId() + "/" + seatId , ticket.getId());
+                restTemplate.put("http://localhost:8085/api/seats/" + ticket.getScheduleId() + "/" + seatId , ticket.getId());
             } catch (HttpClientErrorException e) {
                 return new ResponseEntity<>("Venue service error", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
         return new ResponseEntity<>("Ticket created!", HttpStatus.CREATED);
     }
+
+
 
     // public String createTicket(TicketPost ticketPost){
     //        UserInfo userInfo = this.userInfo(ticketPost.getUserId()); // check if user exists

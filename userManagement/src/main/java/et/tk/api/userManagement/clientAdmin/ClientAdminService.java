@@ -27,7 +27,7 @@ public class ClientAdminService {
         clientAdmin.setId(null);
         try {
             clientInfoResponseEntity = restTemplate
-                    .getForEntity("http://localhost:8081/api/clients/"+ clientAdmin.getClientId() , ClientInfo.class);
+                    .getForEntity("http://localhost:8085/api/clients/"+ clientAdmin.getClientId() , ClientInfo.class);
         } catch (HttpClientErrorException e){
             return "client";
         }
@@ -64,7 +64,7 @@ public class ClientAdminService {
 
         try {
             clientInfoResponseEntity = restTemplate
-                    .getForEntity("http://localhost:8081/api/clients/"+ clientAdmin.getClientId() , ClientInfo.class);
+                    .getForEntity("http://localhost:8085/api/clients/"+ clientAdmin.getClientId() , ClientInfo.class);
         } catch (HttpClientErrorException e){
             return "client";
         }

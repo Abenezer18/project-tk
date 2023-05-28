@@ -12,5 +12,5 @@ import lombok.Setter;
 public class TicketPost {
     private String userId;
     private String scheduleId;
-    private String ticketPrice;
+    private double ticketPrice;
 }

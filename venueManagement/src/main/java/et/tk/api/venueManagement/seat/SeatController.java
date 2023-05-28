@@ -20,10 +20,12 @@ public class SeatController {
         String status = seatService.createSeat(hallId, seat);
         if (Objects.equals(status, "hall"))
             return new ResponseEntity<>("Hall does not exist",HttpStatus.NOT_FOUND);
-        else if (Objects.equals(status, "name")) {
+        else if (Objects.equals(status, "name"))
             return new ResponseEntity<>("Seat already exists",HttpStatus.FOUND);
-        } else
-            return new ResponseEntity<>(HttpStatus.CREATED);
+        else if (Objects.equals(status, "hall price"))
+            return new ResponseEntity<>("hall price is 0",HttpStatus.BAD_REQUEST);
+        else
+            return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{hallId}/seats")

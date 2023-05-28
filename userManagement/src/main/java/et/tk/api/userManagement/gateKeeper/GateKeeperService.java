@@ -24,7 +24,7 @@ public class GateKeeperService {
         ResponseEntity<VenueInfo> gateKeeperResponseEntity;
         try {
             gateKeeperResponseEntity = restTemplate
-                    .getForEntity("http://localhost:8081/api/venues/"+ gateKeeper.getVenueId() , VenueInfo.class);
+                    .getForEntity("http://localhost:8085/api/venues/"+ gateKeeper.getVenueId() , VenueInfo.class);
         } catch (HttpClientErrorException e){
             return "venue";
         }
